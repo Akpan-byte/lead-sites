@@ -1,0 +1,10 @@
+# Sensitive config (stored in /config/.lead-to-site/ instead)
+config.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Modal
+.modal/
