@@ -6,5 +6,3 @@
 - Added Jina AI scraping for high-speed lead analysis.
 - Integrated Gmail API (OAuth2) and Instantly webhook for outreach.
 - Parallel processing support in Modal backend.
-
-<!-- Mock agent concurrent edit for verification -->
