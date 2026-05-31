@@ -4,3 +4,9 @@
 !/README.md
 !/CHANGELOG.md
 !.gitignore
+!/coldmath/**
+!/coldmath/
+!/coldmath-dashboard/**
+!/coldmath-dashboard/
+!/projects/
+!/projects/**
