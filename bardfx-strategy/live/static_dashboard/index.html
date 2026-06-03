@@ -299,42 +299,23 @@
                 </table>
             </div>
             
-            <!-- Asset Allocations -->
+            <!-- Asset Allocations & Live Quotes -->
             <div class="chrome-frame">
-                <h3 style="margin-top:0; text-transform: uppercase;">📊 Asset Gating & Allocations</h3>
+                <h3 style="margin-top:0; text-transform: uppercase;">📊 Tracked Assets & Live Quotes</h3>
                 <table>
                     <thead>
                         <tr>
                             <th>Asset</th>
                             <th>Strategy Target</th>
+                            <th>Live Price</th>
                             <th>Trades Today</th>
                             <th>Max Allowed</th>
+                            <th>Last Polled</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="allocations-table-body">
                         <tr>
-                            <td>/GC (Gold Futures)</td>
-                            <td>Strategy 2: FVG S&D Gated ORB</td>
-                            <td id="trades-gc">0</td>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <td>/ES (S&P 500 Futures)</td>
-                            <td>Strategy 3: Inversed OCO MR</td>
-                            <td id="trades-es">0</td>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <td>/NQ (Nasdaq Futures)</td>
-                            <td>Strategy 1: Volume Profile ORB</td>
-                            <td id="trades-nq">0</td>
-                            <td>1</td>
-                        </tr>
-                        <tr>
-                            <td>/YM (Dow Futures)</td>
-                            <td>Strategy 3: Inversed OCO MR</td>
-                            <td id="trades-ym">0</td>
-                            <td>1</td>
+                            <td colspan="6" style="text-align: center; color: var(--white-dim);">Waiting for data updates...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -367,6 +348,20 @@
             </div>
 
             <div class="chrome-frame">
+                <h3 style="margin-top:0; text-transform: uppercase; color: var(--white-pure);">⚡ Real-time VPS Sync</h3>
+                <p style="font-size:12px; color: var(--white-dim); line-height: 1.6;">
+                    Connect directly to the VPS server HTTP API for sub-second updates with zero Git commit latency.
+                </p>
+                <div class="config-group">
+                    <label>VPS API URL</label>
+                    <input type="text" id="vps-url" placeholder="e.g. http://163.192.211.26:8502">
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn" style="width:100%" onclick="saveVpsConfig()">Connect Live</button>
+                </div>
+            </div>
+
+            <div class="chrome-frame">
                 <h3 style="margin-top:0; text-transform: uppercase;">🔌 Broker Connection Status</h3>
                 <ul style="font-size: 13px; line-height: 1.8; padding-left: 20px;">
                     <li>Topstep Broker (Tradovate): <strong style="color: #00ff66;">ACTIVE</strong></li>
@@ -386,11 +381,18 @@
             syncData();
         }
 
+        function saveVpsConfig() {
+            localStorage.setItem('vps_url', document.getElementById('vps-url').value);
+            alert("VPS API configured! Attempting direct synchronization...");
+            syncData();
+        }
+
         function resetConfig() {
             localStorage.clear();
             document.getElementById('gh-user').value = '';
             document.getElementById('gh-repo').value = '';
             document.getElementById('gh-pat').value = '';
+            document.getElementById('vps-url').value = '';
             alert("Config cleared.");
         }
 
@@ -398,48 +400,73 @@
             document.getElementById('gh-user').value = localStorage.getItem('gh_user') || '';
             document.getElementById('gh-repo').value = localStorage.getItem('gh_repo') || '';
             document.getElementById('gh-pat').value = localStorage.getItem('gh_pat') || '';
+            document.getElementById('vps-url').value = localStorage.getItem('vps_url') || 'http://163.192.211.26:8502';
         }
 
         async function syncData() {
+            const vpsUrl = localStorage.getItem('vps_url') || 'http://163.192.211.26:8502';
             const user = localStorage.getItem('gh_user');
             const repo = localStorage.getItem('gh_repo');
             const pat = localStorage.getItem('gh_pat');
 
-            if (!user || !repo || !pat) {
-                // Local relative path fallback
+            // 1. Try VPS Direct Sync
+            if (vpsUrl) {
                 try {
-                    const response = await fetch('./live_broker_state.json');
+                    const response = await fetch(`${vpsUrl.replace(/\/$/, '')}/live_broker_state.json`, { cache: 'no-store' });
                     if (response.ok) {
                         const data = await response.json();
                         updateUI(data);
-                        document.getElementById('system-indicator').className = 'indicator-dot';
+                        const indicator = document.getElementById('system-indicator');
+                        indicator.className = 'indicator-dot';
+                        indicator.style.backgroundColor = '#00ff66';
+                        indicator.style.boxShadow = '0 0 12px #00ff66';
+                        return; // Done!
                     }
                 } catch (err) {
-                    console.log("Local fallback failed or file not found.");
+                    console.log("Direct VPS connection failed. Trying fallback options...");
                 }
-                return;
             }
 
-            // Fetch live_broker_state.json from GitHub REST API
-            const url = `https://api.github.com/repos/${user}/${repo}/contents/live_broker_state.json`;
-            try {
-                const response = await fetch(url, {
-                    headers: {
-                        'Authorization': `token ${pat}`,
-                        'Accept': 'application/vnd.github.v3.raw'
-                    }
-                });
+            // 2. Try GitHub Sync
+            if (user && repo && pat) {
+                const url = `https://api.github.com/repos/${user}/${repo}/contents/live_broker_state.json`;
+                try {
+                    const response = await fetch(url, {
+                        headers: {
+                            'Authorization': `token ${pat}`,
+                            'Accept': 'application/vnd.github.v3.raw'
+                        }
+                    });
 
+                    if (response.ok) {
+                        const data = await response.json();
+                        updateUI(data);
+                        const indicator = document.getElementById('system-indicator');
+                        indicator.className = 'indicator-dot';
+                        indicator.style.backgroundColor = '#00ff66';
+                        indicator.style.boxShadow = '0 0 12px #00ff66';
+                        return;
+                    }
+                } catch (err) {
+                    console.error("GitHub sync failed:", err);
+                }
+            }
+
+            // 3. Try Local Fallback (Relative path)
+            try {
+                const response = await fetch('./live_broker_state.json', { cache: 'no-store' });
                 if (response.ok) {
                     const data = await response.json();
                     updateUI(data);
-                    document.getElementById('system-indicator').className = 'indicator-dot';
+                    const indicator = document.getElementById('system-indicator');
+                    indicator.className = 'indicator-dot';
+                    indicator.style.backgroundColor = '#00ff66';
+                    indicator.style.boxShadow = '0 0 12px #00ff66';
                 } else {
-                    console.error("Failed to sync. Status:", response.status);
                     document.getElementById('system-indicator').className = 'indicator-dot indicator-offline';
                 }
             } catch (err) {
-                console.error("Error fetching state:", err);
+                console.error("Local fallback failed:", err);
                 document.getElementById('system-indicator').className = 'indicator-dot indicator-offline';
             }
         }
@@ -455,17 +482,52 @@
                 pnlEl.className = 'metric-value';
             }
 
-            // Trades counts
-            document.getElementById('trades-gc').innerText = data.trades_count?.['/GC'] || 0;
-            document.getElementById('trades-es').innerText = data.trades_count?.['/ES'] || 0;
-            document.getElementById('trades-nq').innerText = data.trades_count?.['/NQ'] || 0;
-            document.getElementById('trades-ym').innerText = data.trades_count?.['/YM'] || 0;
-
-            // Active orders
+            // Active orders count
             const activeOrders = data.active_orders || {};
             const orderKeys = Object.keys(activeOrders);
             document.getElementById('active-orders-count').innerText = orderKeys.length;
 
+            // Render Allocations & Live Quotes
+            const allocBody = document.getElementById('allocations-table-body');
+            allocBody.innerHTML = '';
+            
+            const tracked = data.tracked_assets || {};
+            const assetsList = ['/GC', '/ES', '/NQ', '/YM', 'USDJPY', 'NZDUSD'];
+            
+            assetsList.forEach(asset => {
+                const info = tracked[asset] || {};
+                const lastPrice = info.last_price !== undefined ? info.last_price.toFixed(4).replace(/\.?0+$/, '') : 'N/A';
+                
+                let strategyName = 'N/A';
+                if (info.strategy === 'S1') strategyName = 'S1: Vol Profile ORB';
+                else if (info.strategy === 'S2') strategyName = 'S2: FVG S&D Gated ORB';
+                else if (info.strategy === 'S3') strategyName = 'S3: Inversed OCO MR';
+                
+                let pollStr = 'Never';
+                if (info.last_poll) {
+                    const pollTime = new Date(info.last_poll);
+                    const diffSeconds = Math.max(0, Math.floor((new Date() - pollTime) / 1000));
+                    pollStr = diffSeconds < 5 ? 'Just now' : `${diffSeconds}s ago`;
+                }
+                
+                const tradesToday = data.trades_count?.[asset] || 0;
+                const maxAllowed = 1;
+                
+                allocBody.innerHTML += `
+                    <tr>
+                        <td><strong>${asset}</strong></td>
+                        <td><span style="font-size:12px; color: var(--white-dim);">${strategyName}</span></td>
+                        <td><strong style="color: #00ffcc; font-family: 'Share Tech Mono', monospace; font-size:15px;">${lastPrice}</strong></td>
+                        <td>${tradesToday}</td>
+                        <td>${maxAllowed}</td>
+                        <td style="color: ${(pollStr === 'Just now' || (pollStr.includes('s ago') && parseInt(pollStr) < 45)) ? '#00ff66' : '#ff3366'}; font-size: 12px; font-weight: bold;">
+                            ${pollStr}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Active orders table
             const tbody = document.getElementById('orders-table-body');
             tbody.innerHTML = '';
 
@@ -492,14 +554,13 @@
         function triggerFlatten() {
             if (confirm("🚨 ARE YOU SURE YOU WANT TO FLATTEN ALL ACTIVE TRADES AND CANCEL ALL PENDING ORDERS?")) {
                 alert("Flatten signal dispatched to webhook endpoint.");
-                // In actual deployment, this sends a POST request to your VPS webhook
             }
         }
 
         // Initialize Page
         loadSavedConfig();
         syncData();
-        setInterval(syncData, 15000); // Sync every 15 seconds
+        setInterval(syncData, 5000); // Poll every 5 seconds for responsive live data
     </script>
 </body>
 </html>
