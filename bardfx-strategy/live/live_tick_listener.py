@@ -38,7 +38,9 @@ class LiveTickListener:
             "/GC": {"symbol": "GC", "strategy": "S2", "tick_size": 0.1, "qty": 1},
             "/ES": {"symbol": "ES", "strategy": "S3", "tick_size": 0.25, "qty": 1},
             "/NQ": {"symbol": "NQ", "strategy": "S1", "tick_size": 0.25, "qty": 1},
-            "/YM": {"symbol": "YM", "strategy": "S3", "tick_size": 1.0, "qty": 1}
+            "/YM": {"symbol": "YM", "strategy": "S3", "tick_size": 1.0, "qty": 1},
+            "USDJPY": {"symbol": "USDJPY", "strategy": "None", "tick_size": 0.01, "qty": 0.0},
+            "NZDUSD": {"symbol": "NZDUSD", "strategy": "None", "tick_size": 0.0001, "qty": 0.0}
         }
         
         # Load local bar database cache

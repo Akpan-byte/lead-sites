@@ -492,13 +492,13 @@
             allocBody.innerHTML = '';
             
             const tracked = data.tracked_assets || {};
-            const assetsList = ['/GC', '/ES', '/NQ', '/YM'];
+            const assetsList = ['/GC', '/ES', '/NQ', '/YM', 'USDJPY', 'NZDUSD'];
             
             assetsList.forEach(asset => {
                 const info = tracked[asset] || {};
                 const lastPrice = info.last_price !== undefined ? info.last_price.toFixed(4).replace(/\.?0+$/, '') : 'N/A';
                 
-                let strategyName = 'N/A';
+                let strategyName = 'Inactive (No Trade)';
                 if (info.strategy === 'S1') strategyName = 'S1: Vol Profile ORB';
                 else if (info.strategy === 'S2') strategyName = 'S2: FVG S&D Gated ORB';
                 else if (info.strategy === 'S3') strategyName = 'S3: Inversed OCO MR';
