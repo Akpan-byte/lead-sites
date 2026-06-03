@@ -13,7 +13,8 @@ sys.path.append(str(Path(__file__).resolve().parent))
 from unified_strategy_stack import (
     VolumeProfileGatedORB,
     FVGSupplyDemandGatedORB,
-    InversedOCOMeanReversion
+    InversedOCOMeanReversion,
+    NQWideOCOBreakout
 )
 from live_execution_broker import LiveExecutionBroker
 
@@ -32,15 +33,17 @@ class LiveTickListener:
         self.s2 = FVGSupplyDemandGatedORB(htf_m=60, ort_m=15, ltf_m=1, rr=3.0, slippage=0.0001, sl_buffer=0.0002)
         # S3: Inversed OCO Mean Reversion
         self.s3 = InversedOCOMeanReversion(ort_m=15, ltf_m=1, slippage=0.0001)
+        # S4: NQ Wide OCO Breakout
+        self.s4 = NQWideOCOBreakout(buffer_pts=32.0, sl_pts=56.0, tp_pts=98.0, lookback=5)
         
         # Asset configurations
         self.assets = {
             "/GC": {"symbol": "GC", "strategy": "S2", "tick_size": 0.1, "qty": 1},
             "/ES": {"symbol": "ES", "strategy": "S3", "tick_size": 0.25, "qty": 1},
-            "/NQ": {"symbol": "NQ", "strategy": "S1", "tick_size": 0.25, "qty": 1},
+            "/NQ": {"symbol": "NQ", "strategy": "S4", "tick_size": 0.25, "qty": 1},
             "/YM": {"symbol": "YM", "strategy": "S3", "tick_size": 1.0, "qty": 1},
-            "USDJPY": {"symbol": "USDJPY", "strategy": "None", "tick_size": 0.01, "qty": 0.0},
-            "NZDUSD": {"symbol": "NZDUSD", "strategy": "None", "tick_size": 0.0001, "qty": 0.0}
+            "USDJPY": {"symbol": "USDJPY", "strategy": "S1", "tick_size": 0.01, "qty": 0.1},
+            "NZDUSD": {"symbol": "NZDUSD", "strategy": "S1", "tick_size": 0.0001, "qty": 0.1}
         }
         
         # Load local bar database cache
@@ -111,6 +114,9 @@ class LiveTickListener:
         elif strat_type == "S3":
             # Inversed OCO Mean Reversion
             trades = self.s3.backtest(df_1m)
+        elif strat_type == "S4":
+            # NQ Wide OCO Breakout
+            trades = self.s4.backtest(df_1m)
             
         # Check if the last bar triggered an active signal
         if trades:
@@ -170,7 +176,7 @@ class LiveTickListener:
                     import subprocess
                     try:
                         print("Syncing live state to GitHub repository...")
-                        subprocess.run(["git", "add", "bardfx-strategy/live/static_dashboard/live_broker_state.json"], cwd="/config", check=True)
+                        subprocess.run(["git", "add", "-f", "bardfx-strategy/live/static_dashboard/live_broker_state.json"], cwd="/config", check=True)
                         subprocess.run(["git", "commit", "-m", "chore: Auto-update live tick prices [skip ci]"], cwd="/config", check=True)
                         subprocess.run(["git", "push", "origin", "master"], cwd="/config", check=True)
                         last_git_push = current_time

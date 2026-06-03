@@ -10,7 +10,7 @@ sys.path.append(str(Path(__file__).parent))
 from tradovate_client import TradovateClient
 from mt5_client import MT5Client
 
-STATE_FILE = Path("/config/bardfx-strategy/live/live_broker_state.json")
+STATE_FILE = Path("/config/bardfx-strategy/live/static_dashboard/live_broker_state.json")
 
 class LiveExecutionBroker:
     def __init__(self, demo=True):
