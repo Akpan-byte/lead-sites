@@ -78,8 +78,12 @@ class LiveTickListener:
                 csv_path = Path("/config/bardfx-strategy/data") / csv_name
                 
             if not csv_path.exists():
-                print(f"  Warning: No source data found for {asset} at {csv_path}")
-                return None
+                gz_path = csv_path.with_suffix('.csv.gz')
+                if gz_path.exists():
+                    csv_path = gz_path
+                else:
+                    print(f"  Warning: No source data found for {asset} at {csv_path}")
+                    return None
                 
             df = pd.read_csv(csv_path)
             df['timestamp'] = pd.to_datetime(df['timestamp'], utc=True)
