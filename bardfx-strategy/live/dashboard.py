@@ -198,9 +198,7 @@ def main():
             {"Asset": "/GC (Gold Future)", "Default Strategy": "Strategy 2: FVG S&D Gated ORB", "Trades Today": state.get("trades_count", {}).get("/GC", 0), "Max Allowed": 1},
             {"Asset": "/ES (S&P 500 Future)", "Default Strategy": "Strategy 3: Inversed OCO MR", "Trades Today": state.get("trades_count", {}).get("/ES", 0), "Max Allowed": 1},
             {"Asset": "/NQ (Nasdaq Future)", "Default Strategy": "Strategy 1: VP Gated ORB", "Trades Today": state.get("trades_count", {}).get("/NQ", 0), "Max Allowed": 1},
-            {"Asset": "/YM (Dow Jones Future)", "Default Strategy": "Strategy 3: Inversed OCO MR", "Trades Today": state.get("trades_count", {}).get("/YM", 0), "Max Allowed": 1},
-            {"Asset": "USDJPY (Forex)", "Default Strategy": "Strategy 1: VP Gated ORB", "Trades Today": state.get("trades_count", {}).get("USDJPY", 0), "Max Allowed": 1},
-            {"Asset": "NZDUSD (Forex)", "Default Strategy": "Strategy 1: VP Gated ORB", "Trades Today": state.get("trades_count", {}).get("NZDUSD", 0), "Max Allowed": 1}
+            {"Asset": "/YM (Dow Jones Future)", "Default Strategy": "Strategy 3: Inversed OCO MR", "Trades Today": state.get("trades_count", {}).get("/YM", 0), "Max Allowed": 1}
         ]
         st.table(allocation_data)
 

@@ -38,9 +38,7 @@ class LiveTickListener:
             "/GC": {"symbol": "GC", "strategy": "S2", "tick_size": 0.1, "qty": 1},
             "/ES": {"symbol": "ES", "strategy": "S3", "tick_size": 0.25, "qty": 1},
             "/NQ": {"symbol": "NQ", "strategy": "S1", "tick_size": 0.25, "qty": 1},
-            "/YM": {"symbol": "YM", "strategy": "S3", "tick_size": 1.0, "qty": 1},
-            "USDJPY": {"symbol": "USDJPY", "strategy": "S1", "tick_size": 0.01, "qty": 0.01},
-            "NZDUSD": {"symbol": "NZDUSD", "strategy": "S1", "tick_size": 0.0001, "qty": 0.1}
+            "/YM": {"symbol": "YM", "strategy": "S3", "tick_size": 1.0, "qty": 1}
         }
         
         # Load local bar database cache
@@ -135,21 +133,49 @@ class LiveTickListener:
     def process_all_assets(self):
         """Loops through all assets, updates bars, and runs strategy checks."""
         print(f"\n--- Processing Cycle: {datetime.datetime.now()} ---")
+        cycle_time = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        
+        if "tracked_assets" not in self.broker.state:
+            self.broker.state["tracked_assets"] = {}
+            
         for asset in self.assets.keys():
             df_1m = self.fetch_latest_bars(asset)
-            if df_1m is not None and len(df_1m) > 10:
-                self.run_strategy_check(asset, df_1m)
+            if df_1m is not None and len(df_1m) > 0:
+                last_price = float(df_1m['close'].iloc[-1])
+                self.broker.state["tracked_assets"][asset] = {
+                    "last_price": last_price,
+                    "last_poll": cycle_time,
+                    "strategy": self.assets[asset]["strategy"]
+                }
+                if len(df_1m) > 10:
+                    self.run_strategy_check(asset, df_1m)
             time.sleep(1.0) # Network throttle delay
 
     def start_polling_loop(self, interval_seconds=30):
         """Starts the main polling loop for live automated trading."""
         print(f"Starting Live Tick Listener Polling Loop (Interval: {interval_seconds}s)...")
+        last_git_push = 0
         try:
             while True:
                 self.process_all_assets()
                 # Periodically update broker positions and orders in state file
                 self.broker.tv_client.get_positions()
                 self.broker._save_state(self.broker.state)
+                
+                # Sync state to GitHub once every 5 minutes for static dashboard hosting fallback
+                current_time = time.time()
+                if current_time - last_git_push > 300:
+                    import subprocess
+                    try:
+                        print("Syncing live state to GitHub repository...")
+                        subprocess.run(["git", "add", "bardfx-strategy/live/static_dashboard/live_broker_state.json"], cwd="/config", check=True)
+                        subprocess.run(["git", "commit", "-m", "chore: Auto-update live tick prices [skip ci]"], cwd="/config", check=True)
+                        subprocess.run(["git", "push", "origin", "master"], cwd="/config", check=True)
+                        last_git_push = current_time
+                        print("  GitHub sync completed.")
+                    except Exception as e:
+                        print(f"  Warning: Git push failed: {e}")
+                        
                 time.sleep(interval_seconds)
         except KeyboardInterrupt:
             print("Listener loop stopped by operator.")
