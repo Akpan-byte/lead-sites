@@ -1,0 +1,11 @@
+{
+    "date": "2026-06-03",
+    "realized_pnl": 0.0,
+    "trades_count": {
+        "/GC": 0,
+        "/ES": 0,
+        "/NQ": 0,
+        "/YM": 0
+    },
+    "active_orders": {}
+}
