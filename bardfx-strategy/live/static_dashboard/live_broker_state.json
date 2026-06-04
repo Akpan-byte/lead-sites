@@ -118,85 +118,85 @@
             "strategy": "S1"
         },
         "/ES_NYSE_TICK_FADE": {
-            "last_price": 743.45,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 747.69,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(14, 20, 80)",
             "inverse": false,
             "position_active": false
         },
         "/ES_ROBERT_MINER_DUAL_TF": {
-            "last_price": 743.51,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 747.67,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(20, 9)",
             "inverse": false,
             "position_active": false
         },
         "/ES_ONE_BOX_CONSOLIDATION_ORB": {
-            "last_price": 743.56,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 747.68,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(9, 45, 2.0)",
             "inverse": false,
             "position_active": false
         },
         "/ES_VANNA_CHARM_EOD": {
-            "last_price": 743.54,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 747.55,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(14, 0)",
             "inverse": true,
             "position_active": false
         },
         "/NQ_NYSE_TICK_FADE": {
-            "last_price": 703.545,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 711.44,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(14, 20, 80)",
             "inverse": false,
             "position_active": false
         },
         "/NQ_ROBERT_MINER_DUAL_TF": {
-            "last_price": 703.875,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 710.94,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(20, 9)",
             "inverse": false,
             "position_active": false
         },
         "/NQ_FAILED_TWO_DOWN": {
-            "last_price": 703.89,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 710.96,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(50, 2, 2.5)",
             "inverse": false,
             "position_active": false
         },
         "/NQ_ONE_BOX_CONSOLIDATION_ORB": {
-            "last_price": 703.48,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 711.38,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(9, 45, 2.0)",
             "inverse": false,
             "position_active": false
         },
         "/YM_NYSE_TICK_FADE": {
-            "last_price": 509.78,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 511.645,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(14, 20, 80)",
             "inverse": false,
             "position_active": false
         },
         "/YM_ROBERT_MINER_DUAL_TF": {
-            "last_price": 509.61,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 511.595,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(20, 9)",
             "inverse": false,
             "position_active": false
         },
         "/YM_ONE_BOX_CONSOLIDATION_ORB": {
-            "last_price": 509.22,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 511.6,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(9, 45, 2.0)",
             "inverse": false,
             "position_active": false
         },
         "/YM_FAILED_TWO_DOWN": {
-            "last_price": 509.485,
-            "last_poll": "2026-06-04T18:08:25.187728+00:00",
+            "last_price": 511.62,
+            "last_poll": "2026-06-04T18:13:27.295481+00:00",
             "best_p": "(20, 2, 2.5)",
             "inverse": false,
             "position_active": false
