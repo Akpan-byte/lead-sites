@@ -16,11 +16,11 @@
         "/NQ_RSI_EXTREME": 10,
         "/YM_ORB_3M": 10,
         "/YM_ORB_15M": 10,
-        "/YM_ORB_30M": 8,
+        "/YM_ORB_30M": 10,
         "/YM_ORB_60M": 10,
-        "/YM_ORB_1M": 4,
+        "/YM_ORB_1M": 8,
         "/YM_ORB_5M": 10,
-        "/YM_FAILED_2DN": 6,
+        "/YM_FAILED_2DN": 8,
         "/YM_VWAP_RECLAIM": 4,
         "/YM_SESSION_HL_FADE": 8,
         "/YM_OPEN_DRIVE": 2
@@ -995,6 +995,86 @@
             "sl": null,
             "tp": null,
             "broker": "tradovate"
+        },
+        "mock_tv_1780876371": {
+            "asset": "/YM",
+            "strategy": "ORB_1M",
+            "action": "Buy",
+            "qty": 95,
+            "price": 511.62,
+            "sl": 511.2709,
+            "tp": 512.3181,
+            "broker": "tradovate"
+        },
+        "mock_tv_1780876376": {
+            "asset": "/YM",
+            "strategy": "ORB_1M",
+            "action": "Sell",
+            "qty": 95,
+            "price": 512.28,
+            "sl": null,
+            "tp": null,
+            "broker": "tradovate"
+        },
+        "mock_tv_1780876401": {
+            "asset": "/YM",
+            "strategy": "ORB_30M",
+            "action": "Buy",
+            "qty": 95,
+            "price": 513.24,
+            "sl": 512.8909,
+            "tp": 513.9381,
+            "broker": "tradovate"
+        },
+        "mock_tv_1780876406": {
+            "asset": "/YM",
+            "strategy": "ORB_30M",
+            "action": "Sell",
+            "qty": 95,
+            "price": 512.78,
+            "sl": null,
+            "tp": null,
+            "broker": "tradovate"
+        },
+        "mock_tv_1780876441": {
+            "asset": "/YM",
+            "strategy": "FAILED_2DN",
+            "action": "Sell",
+            "qty": 4,
+            "price": 513.74,
+            "sl": 514.7675,
+            "tp": 513.2263,
+            "broker": "tradovate"
+        },
+        "mock_tv_1780876456": {
+            "asset": "/YM",
+            "strategy": "FAILED_2DN",
+            "action": "Buy",
+            "qty": 4,
+            "price": 510.68,
+            "sl": null,
+            "tp": null,
+            "broker": "tradovate"
+        },
+        "mock_tv_1780876512": {
+            "asset": "/YM",
+            "strategy": "ORB_1M",
+            "action": "Buy",
+            "qty": 95,
+            "price": 511.19,
+            "sl": 510.8409,
+            "tp": 511.8881,
+            "broker": "tradovate"
+        },
+        "mock_tv_1780876517": {
+            "asset": "/YM",
+            "strategy": "ORB_1M",
+            "action": "Sell",
+            "qty": 95,
+            "price": 513.08,
+            "sl": null,
+            "tp": null,
+            "broker": "tradovate"
         }
     },
     "tracked_assets": {
@@ -1083,16 +1163,16 @@
             "position_active": false
         },
         "/ES_OPEN_DRIVE": {
-            "last_price": 747.59,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 747.12,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[0.2, 700]",
             "inverse": false,
             "sizing_mult": 0.0402,
             "position_active": false
         },
         "/YM_OPEN_DRIVE": {
-            "last_price": 513.13,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.645,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[0.2, 700]",
             "inverse": false,
             "sizing_mult": 0.08028,
@@ -1100,23 +1180,23 @@
         },
         "/NQ_OPEN_DRIVE": {
             "last_price": 710.1,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[0.2, 700]",
             "inverse": false,
             "sizing_mult": 0.03449,
             "position_active": false
         },
         "/ES_HIGH_VOL_REV": {
-            "last_price": 747.64,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 746.88,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[2.0]",
             "inverse": true,
             "sizing_mult": 0.4542,
             "position_active": false
         },
         "/YM_RSI_EXTREME": {
-            "last_price": 513.12,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.595,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[5, 80, 20]",
             "inverse": false,
             "sizing_mult": 0.00282,
@@ -1124,7 +1204,7 @@
         },
         "/NQ_BB_REVERSION": {
             "last_price": 709.9,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[2.0]",
             "inverse": false,
             "sizing_mult": 0.00811,
@@ -1132,7 +1212,7 @@
         },
         "/NQ_CCI_FADE": {
             "last_price": 709.745,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[200]",
             "inverse": false,
             "sizing_mult": 0.00592,
@@ -1140,95 +1220,95 @@
         },
         "/NQ_RSI_EXTREME": {
             "last_price": 709.33,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[5, 80, 20]",
             "inverse": false,
             "sizing_mult": 0.00554,
             "position_active": false
         },
         "/YM_SESSION_HL_FADE": {
-            "last_price": 513.17,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.6,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[10, 30]",
             "inverse": true,
             "sizing_mult": 0.02532,
             "position_active": false
         },
         "/YM_LUNCH_REV": {
-            "last_price": 512.98,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.62,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[700, 780]",
             "inverse": true,
             "sizing_mult": 0.03148,
             "position_active": false
         },
         "/YM_FAILED_2DN": {
-            "last_price": 512.925,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.64,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[100]",
             "inverse": true,
             "sizing_mult": 0.01039,
             "position_active": false
         },
         "/YM_VWAP_RECLAIM": {
-            "last_price": 512.76,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.61,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[2]",
             "inverse": true,
             "sizing_mult": 0.00606,
             "position_active": false
         },
         "/YM_ORB_1M": {
-            "last_price": 512.81,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.755,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[571, 0.05, 1.5, 0.9]",
             "inverse": false,
             "sizing_mult": 0.00621,
             "position_active": false
         },
         "/YM_ORB_3M": {
-            "last_price": 512.66,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.81,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[573, 0.05, 0.5, 0.5]",
             "inverse": false,
             "sizing_mult": 0.00621,
             "position_active": false
         },
         "/YM_ORB_5M": {
-            "last_price": 512.59,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.77,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[575, 0.05, 2.0, 0.9]",
             "inverse": false,
             "sizing_mult": 0.00621,
             "position_active": false
         },
         "/YM_ORB_15M": {
-            "last_price": 512.58,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.74,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[585, 0.05, 1.79, 0.9]",
             "inverse": false,
             "sizing_mult": 0.00621,
             "position_active": false
         },
         "/YM_ORB_30M": {
-            "last_price": 512.46,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.65,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[600, 0.25, 0.5, 0.5]",
             "inverse": false,
             "sizing_mult": 0.00621,
             "position_active": false
         },
         "/YM_ORB_60M": {
-            "last_price": 512.48,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.675,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[630, 0.05, 1.79, 0.75]",
             "inverse": false,
             "sizing_mult": 0.00621,
             "position_active": false
         },
         "/YM_VOL_CONTRACTION": {
-            "last_price": 512.39,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_price": 511.56,
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[0.8]",
             "inverse": true,
             "sizing_mult": 0.00507,
@@ -1236,7 +1316,7 @@
         },
         "/NQ_PIVOT_BO": {
             "last_price": 709.28,
-            "last_poll": "2026-06-07T23:51:34.607432+00:00",
+            "last_poll": "2026-06-07T23:56:38.002557+00:00",
             "best_p": "[1]",
             "inverse": true,
             "sizing_mult": 0.00449,
