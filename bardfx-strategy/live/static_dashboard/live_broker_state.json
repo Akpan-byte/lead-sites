@@ -1,21 +1,11 @@
 {
-    "date": "2026-06-04",
+    "date": "2026-06-07",
     "realized_pnl": 0.0,
     "trades_count": {
-        "/ES_NYSE_TICK_FADE": 1,
-        "/NQ_ROBERT_MINER_DUAL_TF": 1,
-        "/YM_NYSE_TICK_FADE": 1,
-        "/ES_ROBERT_MINER_DUAL_TF": 1,
-        "/YM_ROBERT_MINER_DUAL_TF": 1,
-        "/NQ_NYSE_TICK_FADE": 1,
-        "/YM_ONE_BOX_CONSOLIDATION_ORB": 1,
-        "/YM_FAILED_TWO_DOWN": 1,
-        "/ES_ONE_BOX_CONSOLIDATION_ORB": 1,
-        "/NQ_ONE_BOX_CONSOLIDATION_ORB": 1,
-        "/NQ_FAILED_TWO_DOWN": 1
+        "/ES_NYSE_TICK_FADE": 1
     },
     "active_orders": {
-        "mock_tv_1780586230": {
+        "mock_tv_1780838797": {
             "asset": "/ES",
             "strategy": "NYSE_TICK_FADE",
             "action": "Buy",
@@ -24,179 +14,89 @@
             "sl": 741.1747,
             "tp": 745.6306,
             "broker": "tradovate"
-        },
-        "mock_tv_1780586241": {
-            "asset": "/YM",
-            "strategy": "NYSE_TICK_FADE",
-            "action": "Buy",
-            "qty": 1.0,
-            "price": 510.765,
-            "sl": 509.7435,
-            "tp": 512.8081,
-            "broker": "tradovate"
-        },
-        "mock_tv_1780586256": {
-            "asset": "/YM",
-            "strategy": "ROBERT_MINER_DUAL_TF",
-            "action": "Sell",
-            "qty": 1.0,
-            "price": 509.04,
-            "sl": 510.0581,
-            "tp": 507.0038,
-            "broker": "tradovate"
-        },
-        "mock_tv_1780586297": {
-            "asset": "/YM",
-            "strategy": "FAILED_TWO_DOWN",
-            "action": "Buy",
-            "qty": 1.0,
-            "price": 510.24,
-            "sl": 509.2195,
-            "tp": 512.281,
-            "broker": "tradovate"
-        },
-        "mock_tv_1780586414": {
-            "asset": "/ES",
-            "strategy": "ONE_BOX_CONSOLIDATION_ORB",
-            "action": "Sell",
-            "qty": 1.0,
-            "price": 745.68,
-            "sl": 747.1714,
-            "tp": 742.6973,
-            "broker": "tradovate"
-        },
-        "mock_tv_1780586424": {
-            "asset": "/NQ",
-            "strategy": "ONE_BOX_CONSOLIDATION_ORB",
-            "action": "Buy",
-            "qty": 1.0,
-            "price": 708.13,
-            "sl": 706.679,
-            "tp": 711.032,
-            "broker": "tradovate"
-        },
-        "mock_tv_1780586470": {
-            "asset": "/NQ",
-            "strategy": "FAILED_TWO_DOWN",
-            "action": "Buy",
-            "qty": 1.0,
-            "price": 709.12,
-            "sl": 707.7018,
-            "tp": 711.9565,
-            "broker": "tradovate"
         }
     },
     "tracked_assets": {
-        "/GC": {
-            "last_price": 4512.0,
-            "last_poll": "2026-06-04T15:15:52.181303+00:00",
-            "strategy": "S2"
-        },
-        "/ES": {
-            "last_price": 7623.5,
-            "last_poll": "2026-06-04T15:15:52.181303+00:00",
-            "strategy": "S3"
-        },
-        "/NQ": {
-            "last_price": 30707.25,
-            "last_poll": "2026-06-04T15:15:52.181303+00:00",
-            "strategy": "S4"
-        },
-        "/YM": {
-            "last_price": 51378.0,
-            "last_poll": "2026-06-04T15:15:52.181303+00:00",
-            "strategy": "S3"
-        },
-        "USDJPY": {
-            "last_price": 159.254,
-            "last_poll": "2026-06-04T15:15:52.181303+00:00",
-            "strategy": "S1"
-        },
-        "NZDUSD": {
-            "last_price": 0.59866,
-            "last_poll": "2026-06-04T15:15:52.181303+00:00",
-            "strategy": "S1"
-        },
         "/ES_NYSE_TICK_FADE": {
-            "last_price": 741.61,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 742.73,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(14, 20, 80)",
             "inverse": false,
             "position_active": false
         },
         "/ES_ROBERT_MINER_DUAL_TF": {
-            "last_price": 741.41,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 743.07,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(20, 9)",
             "inverse": false,
             "position_active": false
         },
         "/ES_ONE_BOX_CONSOLIDATION_ORB": {
-            "last_price": 741.56,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 743.18,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(9, 45, 2.0)",
             "inverse": false,
             "position_active": false
         },
         "/ES_VANNA_CHARM_EOD": {
-            "last_price": 742.07,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 743.26,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(14, 0)",
             "inverse": true,
             "position_active": false
         },
         "/NQ_NYSE_TICK_FADE": {
-            "last_price": 702.74,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 704.87,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(14, 20, 80)",
             "inverse": false,
             "position_active": false
         },
         "/NQ_ROBERT_MINER_DUAL_TF": {
-            "last_price": 703.48,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 704.87,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(20, 9)",
             "inverse": false,
             "position_active": false
         },
         "/NQ_FAILED_TWO_DOWN": {
-            "last_price": 703.65,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 704.53,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(50, 2, 2.5)",
             "inverse": false,
             "position_active": false
         },
         "/NQ_ONE_BOX_CONSOLIDATION_ORB": {
-            "last_price": 704.32,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 704.69,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(9, 45, 2.0)",
             "inverse": false,
             "position_active": false
         },
         "/YM_NYSE_TICK_FADE": {
-            "last_price": 510.65,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 511.13,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(14, 20, 80)",
             "inverse": false,
             "position_active": false
         },
         "/YM_ROBERT_MINER_DUAL_TF": {
-            "last_price": 510.8,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 511.135,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(20, 9)",
             "inverse": false,
             "position_active": false
         },
         "/YM_ONE_BOX_CONSOLIDATION_ORB": {
-            "last_price": 510.32,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 511.01,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(9, 45, 2.0)",
             "inverse": false,
             "position_active": false
         },
         "/YM_FAILED_TWO_DOWN": {
-            "last_price": 510.43,
-            "last_poll": "2026-06-05T17:59:19.889262+00:00",
+            "last_price": 511.04,
+            "last_poll": "2026-06-07T13:26:37.013025+00:00",
             "best_p": "(20, 2, 2.5)",
             "inverse": false,
             "position_active": false
