@@ -2,6 +2,8 @@
 # 2026-06-30  kilo
 #   - Created v5 typed configuration loader (`BotConfig`) and defaults.
 #   - Added `load_bot_config()` that reads env files and validates parameters.
+#   - Added backward-compatible `BASELINE_INDEX`, `TICK_VALUE`, and `TIMEFRAMES`
+#     aliases so the existing `strategy_engine.py` and test suite keep working.
 # WHY: v4 loaded config through an untyped dict. Strongly-typed config catches
 #      misconfiguration early and keeps the rest of v5 focused on trading logic.
 
@@ -41,6 +43,23 @@ DEFAULT_TIMEFRAMES: dict[str, TimeFrameParam] = {
     "30m": TimeFrameParam(or_min=600, trig=0.25, sint=0.50, lock=0.50),
     "60m": TimeFrameParam(or_min=630, trig=0.05, sint=1.79, lock=0.75),
 }
+
+# Backward-compatible dict-of-dicts form used by strategy_engine.py and the
+# existing v5 test suite.  Values are identical to DEFAULT_TIMEFRAMES above.
+TIMEFRAMES: dict[str, dict[str, float]] = {
+    "1m": {"or_min": 571, "trig": 0.05, "sint": 1.50, "lock": 0.90},
+    "3m": {"or_min": 573, "trig": 0.05, "sint": 0.50, "lock": 0.50},
+    "5m": {"or_min": 575, "trig": 0.05, "sint": 2.00, "lock": 0.90},
+    "15m": {"or_min": 585, "trig": 0.05, "sint": 1.79, "lock": 0.90},
+    "30m": {"or_min": 600, "trig": 0.25, "sint": 0.50, "lock": 0.50},
+    "60m": {"or_min": 630, "trig": 0.05, "sint": 1.79, "lock": 0.75},
+}
+
+# Convenience aliases used by the existing v5 strategy engine and tests.
+BASELINE_INDEX = DEFAULT_BASELINE_INDEX
+TICK_VALUE = DEFAULT_TICK_VALUE
+SYMBOL = DEFAULT_SYMBOL
+CONTRACT_ID = DEFAULT_CONTRACT_ID
 
 DEFAULT_CONFIG: dict[str, Any] = {
     "mode": "paper",
@@ -274,11 +293,16 @@ def _validate(cfg: BotConfig) -> None:
 
 __all__ = [
     "BotConfig",
+    "BASELINE_INDEX",
+    "CONTRACT_ID",
     "DEFAULT_BASELINE_INDEX",
     "DEFAULT_CONFIG",
     "DEFAULT_CONTRACT_ID",
     "DEFAULT_SYMBOL",
     "DEFAULT_TICK_VALUE",
     "DEFAULT_TIMEFRAMES",
+    "SYMBOL",
+    "TICK_VALUE",
+    "TIMEFRAMES",
     "load_bot_config",
 ]
