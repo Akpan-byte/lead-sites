@@ -115,7 +115,6 @@ jobs:
           python3 run_oos.py \
             --files oos_files_eth_compact.txt \
             --workers 2 \
-            --compact \
             --fill maker \
             --only ${{ matrix.name }}
 
