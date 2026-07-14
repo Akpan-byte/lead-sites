@@ -1,0 +1,126 @@
+name: ETH ORB maker-fill sweep
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/eth_orb_sweep.yml'
+      - 'backtest/run_is.py'
+      - 'backtest/run_oos.py'
+      - 'backtest/driver.py'
+      - 'backtest/coin_full_registry_eth.json'
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        name:
+          - eth_phase_2.daily_orb_v5_any_1re
+          - eth_phase_2.daily_orb_v5_any_5re
+          - eth_phase_2.daily_orb_v5_any_12re
+          - eth_phase_2.daily_orb_v5_any_50re
+          - eth_phase_2.daily_orb_v5_any_unl
+          - eth_phase_2.daily_orb_v5_any_scale1
+          - eth_phase_2.daily_orb_v5_any_scale3
+          - eth_phase_2.daily_orb_v5_any_scale5
+          - eth_phase_2.daily_orb_v5_any_scaleunl
+          - eth_phase_2.daily_orb_v5_1m_1re
+          - eth_phase_2.daily_orb_v5_1m_5re
+          - eth_phase_2.daily_orb_v5_1m_12re
+          - eth_phase_2.daily_orb_v5_1m_50re
+          - eth_phase_2.daily_orb_v5_1m_unl
+          - eth_phase_2.daily_orb_v5_3m_1re
+          - eth_phase_2.daily_orb_v5_3m_5re
+          - eth_phase_2.daily_orb_v5_3m_12re
+          - eth_phase_2.daily_orb_v5_3m_50re
+          - eth_phase_2.daily_orb_v5_3m_unl
+          - eth_phase_2.daily_orb_v5_5m_1re
+          - eth_phase_2.daily_orb_v5_5m_5re
+          - eth_phase_2.daily_orb_v5_5m_12re
+          - eth_phase_2.daily_orb_v5_5m_50re
+          - eth_phase_2.daily_orb_v5_5m_unl
+          - eth_phase_2.daily_orb_v5_15m_1re
+          - eth_phase_2.daily_orb_v5_15m_5re
+          - eth_phase_2.daily_orb_v5_15m_12re
+          - eth_phase_2.daily_orb_v5_15m_50re
+          - eth_phase_2.daily_orb_v5_15m_unl
+          - eth_phase_2.daily_orb_v5_30m_1re
+          - eth_phase_2.daily_orb_v5_30m_5re
+          - eth_phase_2.daily_orb_v5_30m_12re
+          - eth_phase_2.daily_orb_v5_30m_50re
+          - eth_phase_2.daily_orb_v5_30m_unl
+          - eth_phase_2.daily_orb_v5_1h_1re
+          - eth_phase_2.daily_orb_v5_1h_5re
+          - eth_phase_2.daily_orb_v5_1h_12re
+          - eth_phase_2.daily_orb_v5_1h_50re
+          - eth_phase_2.daily_orb_v5_1h_unl
+          - phase_2.eth_orb_1m_5re
+          - phase_2.eth_orb_3m_5re
+          - phase_2.eth_orb_5m_5re
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download ETH compact data release
+        run: |
+          mkdir -p /tmp
+          gh release download eth-backtest-data-20260714 \
+            -p eth5m_compact.tar.gz \
+            -R ${{ github.repository }} \
+            -D /tmp \
+            --clobber
+          tar -xzf /tmp/eth5m_compact.tar.gz -C /tmp
+          echo "ETH compact markets: $(ls /tmp/eth5m_compact | wc -l)"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install numpy pandas requests redis
+
+      - name: IS backtest (maker fill)
+        working-directory: backtest
+        env:
+          BT_IS_DIR: is_maker_eth
+          BT_EXTRA_STRATEGIES: coin_full_registry_eth.json
+          BT_ONLY_EXTRA_REGISTRY: "1"
+        run: |
+          python3 run_is.py \
+            --files is_files_eth_compact.txt \
+            --workers 2 \
+            --compact \
+            --fill maker \
+            --only ${{ matrix.name }}
+
+      - name: OOS backtest (maker fill)
+        working-directory: backtest
+        env:
+          BT_OOS_DIR: oos_maker_eth
+          BT_EXTRA_STRATEGIES: coin_full_registry_eth.json
+          BT_ONLY_EXTRA_REGISTRY: "1"
+        run: |
+          python3 run_oos.py \
+            --files oos_files_eth_compact.txt \
+            --workers 2 \
+            --compact \
+            --fill maker \
+            --only ${{ matrix.name }}
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eth-maker-${{ matrix.name }}
+          path: |
+            backtest/results/is_maker_eth/${{ matrix.name }}.*
+            backtest/results/oos_maker_eth/${{ matrix.name }}.*
+          if-no-files-found: error
