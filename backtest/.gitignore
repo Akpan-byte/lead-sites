@@ -1,0 +1,21 @@
+# Ignore runtime/output artifacts and large vendored/cached directories
+results/
+logs/
+data/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pkl.gz
+*.tar.gz
+*.zip
+compute_backends/
+filters_v2/
+_refdata_cache/
+cache/
+val_data/
+modal_offload_*.json
+modal_calls_*.json
+modal_batches*.json
+index_5m.json
+tmp/

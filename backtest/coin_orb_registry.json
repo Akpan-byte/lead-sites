@@ -1,0 +1,56 @@
+{
+  "phase_2.eth_orb_1m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": ["spot_price", "strike", "rem_sec", "yp", "np_val", "yes_ask", "no_ask", "tf_hint", "market_id", "or_window_seconds", "max_reentries"],
+    "or_window_seconds": 60,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "phase_2.eth_orb_3m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": ["spot_price", "strike", "rem_sec", "yp", "np_val", "yes_ask", "no_ask", "tf_hint", "market_id", "or_window_seconds", "max_reentries"],
+    "or_window_seconds": 180,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "phase_2.eth_orb_5m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": ["spot_price", "strike", "rem_sec", "yp", "np_val", "yes_ask", "no_ask", "tf_hint", "market_id", "or_window_seconds", "max_reentries"],
+    "or_window_seconds": 120,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "phase_2.sol_orb_1m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": ["spot_price", "strike", "rem_sec", "yp", "np_val", "yes_ask", "no_ask", "tf_hint", "market_id", "or_window_seconds", "max_reentries"],
+    "or_window_seconds": 60,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "phase_2.sol_orb_3m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": ["spot_price", "strike", "rem_sec", "yp", "np_val", "yes_ask", "no_ask", "tf_hint", "market_id", "or_window_seconds", "max_reentries"],
+    "or_window_seconds": 180,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "phase_2.sol_orb_5m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": ["spot_price", "strike", "rem_sec", "yp", "np_val", "yes_ask", "no_ask", "tf_hint", "market_id", "or_window_seconds", "max_reentries"],
+    "or_window_seconds": 120,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  }
+}

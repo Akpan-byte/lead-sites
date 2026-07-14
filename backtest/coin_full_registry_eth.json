@@ -1,0 +1,2115 @@
+{
+  "eth_breakout_pct_003": {
+    "module": "breakout_pct_003",
+    "fn": "breakout_pct_003_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "tf_hint"
+    ]
+  },
+  "eth_breakout_pct_004": {
+    "module": "breakout_pct_004",
+    "fn": "breakout_pct_004_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "tf_hint"
+    ]
+  },
+  "eth_breakout_pct_006": {
+    "module": "breakout_pct_006",
+    "fn": "breakout_pct_006_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "tf_hint"
+    ]
+  },
+  "eth_breakout_pct_008": {
+    "module": "breakout_pct_008",
+    "fn": "breakout_pct_008_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "tf_hint"
+    ]
+  },
+  "eth_breakout_z_1_5": {
+    "module": "breakout_z_1_5",
+    "fn": "breakout_z_1_5_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_breakout_z_1_6": {
+    "module": "breakout_z_1_6",
+    "fn": "breakout_z_1_6_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_breakout_z_2_0": {
+    "module": "breakout_z_2_0",
+    "fn": "breakout_z_2_0_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_breakout_z_3_0": {
+    "module": "breakout_z_3_0",
+    "fn": "breakout_z_3_0_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_breakout": {
+    "module": "breakout",
+    "fn": "breakout_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "tf_hint"
+    ]
+  },
+  "eth_heatmap_expiry_drift_15m": {
+    "module": "heatmap_expiry_drift_15m",
+    "fn": "heatmap_expiry_drift_15m_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "tf_hint"
+    ]
+  },
+  "eth_mean_reversion": {
+    "module": "mean_reversion",
+    "fn": "mean_reversion_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "tf_hint"
+    ]
+  },
+  "eth_mean_reversion_opposite_exit": {
+    "module": "mean_reversion_opposite_exit",
+    "fn": "mean_reversion_opposite_exit_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "tf_hint"
+    ]
+  },
+  "eth_mean_reversion_z_1_5": {
+    "module": "mean_reversion_z_1_5",
+    "fn": "mean_reversion_z_1_5_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_mr_gamma_expiry_pin": {
+    "module": "mr_gamma_expiry_pin",
+    "fn": "mr_gamma_expiry_pin_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "z_score",
+      "z_dist",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_snipe": {
+    "module": "snipe",
+    "fn": "snipe_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "v_t",
+      "std_v",
+      "velocity_history"
+    ]
+  },
+  "eth_kinetic_velocity_breakout": {
+    "module": "kinetic_velocity_breakout",
+    "fn": "kinetic_velocity_breakout_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "v_t",
+      "std_v",
+      "a_t",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_l2_absorption_spread_collapse": {
+    "module": "l2_absorption_spread_collapse",
+    "fn": "l2_absorption_spread_collapse_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "v_t",
+      "std_v",
+      "spread",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_liquidation_spot_gap_fade": {
+    "module": "liquidation_spot_gap_fade",
+    "fn": "liquidation_spot_gap_fade_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "tick_change",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_mr_heatmap_liq_fade": {
+    "module": "mr_heatmap_liq_fade",
+    "fn": "mr_heatmap_liq_fade_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "tick_change",
+      "spread_val"
+    ]
+  },
+  "eth_mr_l2_ofi_delta_fade": {
+    "module": "mr_l2_ofi_delta_fade",
+    "fn": "mr_l2_ofi_delta_fade_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "v_t",
+      "std_v",
+      "spread",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_ofi_momentum_bo_15m": {
+    "module": "ofi_momentum_bo_15m",
+    "fn": "ofi_momentum_bo_15m_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "v_t",
+      "std_v",
+      "spread_val",
+      "yes_ask",
+      "no_ask",
+      "rem_sec",
+      "yp",
+      "np_val"
+    ]
+  },
+  "eth_phase_2.rsi2_connors": {
+    "module": "phase_2.rsi2_connors",
+    "fn": "rsi2_connors_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "asset"
+    ]
+  },
+  "eth_phase_2.pm_orb_v4_reentry": {
+    "module": "phase_2.pm_orb_v4",
+    "fn": "pm_orb_v4_reentry_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "max_entry_price",
+      "market_id",
+      "max_reentries",
+      "or_window_seconds"
+    ],
+    "allow_reentry": true,
+    "or_window_seconds": 5,
+    "max_reentries": 3
+  },
+  "eth_phase_2.pm_orb_v4_reentry_50": {
+    "module": "phase_2.pm_orb_v4",
+    "fn": "pm_orb_v4_reentry_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "max_entry_price",
+      "market_id",
+      "max_reentries",
+      "or_window_seconds"
+    ],
+    "allow_reentry": true,
+    "_max_reentries": 50,
+    "or_window_seconds": 5,
+    "max_reentries": 50
+  },
+  "eth_phase_2.pm_orb_v4_reentry_none": {
+    "module": "phase_2.pm_orb_v4",
+    "fn": "pm_orb_v4_reentry_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "max_entry_price",
+      "market_id",
+      "max_reentries",
+      "or_window_seconds"
+    ],
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "or_window_seconds": 5,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.bbkc_squeeze": {
+    "module": "phase_2.bbkc_squeeze",
+    "fn": "bbkc_squeeze_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "asset"
+    ]
+  },
+  "eth_phase_2.five_min_trend_breakthrough": {
+    "module": "phase_2.five_min_trend_breakthrough",
+    "fn": "five_min_trend_breakthrough_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "asset"
+    ]
+  },
+  "eth_phase_2.btc_up_coint": {
+    "module": "phase_2.btc_up_coint",
+    "fn": "btc_up_coint_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "asset"
+    ]
+  },
+  "eth_phase_2.ou_zscore_mr": {
+    "module": "phase_2.ou_zscore_mr",
+    "fn": "ou_zscore_mr_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "asset"
+    ]
+  },
+  "eth_phase_2.cvd_divergence": {
+    "module": "phase_2.cvd_divergence",
+    "fn": "cvd_divergence_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "tick_change",
+      "velocity_history",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.absorption_reversal": {
+    "module": "phase_2.absorption_reversal",
+    "fn": "absorption_reversal_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "v_t",
+      "std_v",
+      "a_t",
+      "spread",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.ob_imbalance_fade": {
+    "module": "phase_2.ob_imbalance_fade",
+    "fn": "ob_imbalance_fade_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "spread",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.spot_perp_basis": {
+    "module": "phase_2.spot_perp_basis",
+    "fn": "spot_perp_basis_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.clob_mispricing": {
+    "module": "phase_2.clob_mispricing",
+    "fn": "clob_mispricing_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.cross_exchange_drift": {
+    "module": "phase_2.cross_exchange_drift",
+    "fn": "cross_exchange_drift_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "v_t",
+      "std_v",
+      "z_score",
+      "velocity_history",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.ou_mean_reversion": {
+    "module": "phase_2.ou_mean_reversion",
+    "fn": "ou_mean_reversion_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "v_t",
+      "std_v",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.logit_weighted_ensemble": {
+    "module": "phase_2.logit_weighted_ensemble",
+    "fn": "logit_weighted_ensemble_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "v_t",
+      "std_v",
+      "a_t",
+      "spread",
+      "tick_change",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.regime_hmm": {
+    "module": "phase_2.regime_hmm",
+    "fn": "regime_hmm_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "v_t",
+      "std_v",
+      "a_t",
+      "velocity_history",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.vwap_stretch_fade": {
+    "module": "phase_2.vwap_stretch_fade",
+    "fn": "vwap_stretch_fade_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "spread",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.volatility_breakout_gate": {
+    "module": "phase_2.volatility_breakout_gate",
+    "fn": "volatility_breakout_gate_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "v_t",
+      "std_v",
+      "z_score",
+      "velocity_history",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.bollinger_squeeze_release": {
+    "module": "phase_2.bollinger_squeeze_release",
+    "fn": "bollinger_squeeze_release_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "v_t",
+      "std_v",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.confluence_vote": {
+    "module": "phase_2.confluence_vote",
+    "fn": "confluence_vote_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "v_t",
+      "std_v",
+      "a_t",
+      "spread",
+      "tick_change",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.trend_filter_gate": {
+    "module": "phase_2.trend_filter_gate",
+    "fn": "trend_filter_gate_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "v_t",
+      "std_v",
+      "velocity_history",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.adaptive_regime_switch": {
+    "module": "phase_2.adaptive_regime_switch",
+    "fn": "adaptive_regime_switch_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "yp",
+      "np_val",
+      "rem_sec",
+      "z_score",
+      "v_t",
+      "std_v",
+      "a_t",
+      "spread",
+      "velocity_history",
+      "tf_hint"
+    ]
+  },
+  "eth_phase_2.btc_orb_1m_1re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 60,
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.btc_orb_1m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 60,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.btc_orb_1m_12re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 60,
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.btc_orb_1m_50re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 60,
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.btc_orb_1m_unl": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "or_window_seconds": 60,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.btc_orb_3m_1re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 180,
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.btc_orb_3m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 180,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.btc_orb_3m_12re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 180,
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.btc_orb_3m_50re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 180,
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.btc_orb_3m_unl": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "or_window_seconds": 180,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.btc_orb_5m_1re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 120,
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.btc_orb_5m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 120,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.btc_orb_5m_12re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 120,
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.btc_orb_5m_50re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 120,
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.btc_orb_5m_unl": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "or_window_seconds": 120,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.btc_orb_15m_1re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 300,
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.btc_orb_15m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 300,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.btc_orb_15m_12re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 300,
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.btc_orb_15m_50re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 300,
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.btc_orb_15m_unl": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "or_window_seconds": 300,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.btc_orb_30m_1re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 600,
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.btc_orb_30m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 600,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.btc_orb_30m_12re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 600,
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.btc_orb_30m_50re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 600,
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.btc_orb_30m_unl": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "or_window_seconds": 600,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.btc_orb_1h_1re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 900,
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.btc_orb_1h_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 900,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.btc_orb_1h_12re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 900,
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.btc_orb_1h_50re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 900,
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.btc_orb_1h_unl": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "or_window_seconds": 900,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.daily_orb_v5_any_1re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "any",
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.daily_orb_v5_any_5re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "any",
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.daily_orb_v5_any_12re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "any",
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.daily_orb_v5_any_50re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "any",
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.daily_orb_v5_any_unl": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "any",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.daily_orb_v5_any_scale1": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "anyscale",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999,
+    "scale_in": true,
+    "max_adds": 1
+  },
+  "eth_phase_2.daily_orb_v5_any_scale3": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "anyscale",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999,
+    "scale_in": true,
+    "max_adds": 3
+  },
+  "eth_phase_2.daily_orb_v5_any_scale5": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "anyscale",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999,
+    "scale_in": true,
+    "max_adds": 5
+  },
+  "eth_phase_2.daily_orb_v5_any_scaleunl": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "anyscale",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999,
+    "scale_in": true,
+    "max_adds": 999999
+  },
+  "eth_phase_2.daily_orb_v5_1m_1re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1m",
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.daily_orb_v5_1m_5re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1m",
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.daily_orb_v5_1m_12re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1m",
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.daily_orb_v5_1m_50re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1m",
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.daily_orb_v5_1m_unl": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1m",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.daily_orb_v5_3m_1re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "3m",
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.daily_orb_v5_3m_5re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "3m",
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.daily_orb_v5_3m_12re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "3m",
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.daily_orb_v5_3m_50re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "3m",
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.daily_orb_v5_3m_unl": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "3m",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.daily_orb_v5_5m_1re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "5m",
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.daily_orb_v5_5m_5re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "5m",
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.daily_orb_v5_5m_12re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "5m",
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.daily_orb_v5_5m_50re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "5m",
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.daily_orb_v5_5m_unl": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "5m",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.daily_orb_v5_15m_1re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "15m",
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.daily_orb_v5_15m_5re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "15m",
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.daily_orb_v5_15m_12re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "15m",
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.daily_orb_v5_15m_50re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "15m",
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.daily_orb_v5_15m_unl": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "15m",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.daily_orb_v5_30m_1re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "30m",
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.daily_orb_v5_30m_5re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "30m",
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.daily_orb_v5_30m_12re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "30m",
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.daily_orb_v5_30m_50re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "30m",
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.daily_orb_v5_30m_unl": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "30m",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999
+  },
+  "eth_phase_2.daily_orb_v5_1h_1re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1h",
+    "max_reentries": 1,
+    "allow_reentry": true,
+    "_max_reentries": 1
+  },
+  "eth_phase_2.daily_orb_v5_1h_5re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1h",
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "eth_phase_2.daily_orb_v5_1h_12re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1h",
+    "max_reentries": 12,
+    "allow_reentry": true,
+    "_max_reentries": 12
+  },
+  "eth_phase_2.daily_orb_v5_1h_50re": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1h",
+    "max_reentries": 50,
+    "allow_reentry": true,
+    "_max_reentries": 50
+  },
+  "eth_phase_2.daily_orb_v5_1h_unl": {
+    "module": "phase_2.daily_orb_v5",
+    "fn": "daily_orb_v5_signal",
+    "params": [
+      "spot_price",
+      "asset",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "max_reentries"
+    ],
+    "tf_hint": "1h",
+    "allow_reentry": true,
+    "_max_reentries": 999999,
+    "max_reentries": 999999
+  },
+  "phase_2.eth_orb_1m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 60,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "phase_2.eth_orb_3m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 180,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  },
+  "phase_2.eth_orb_5m_5re": {
+    "module": "phase_2.btc_orb",
+    "fn": "btc_orb_signal",
+    "params": [
+      "spot_price",
+      "strike",
+      "rem_sec",
+      "yp",
+      "np_val",
+      "yes_ask",
+      "no_ask",
+      "tf_hint",
+      "market_id",
+      "or_window_seconds",
+      "max_reentries"
+    ],
+    "or_window_seconds": 120,
+    "max_reentries": 5,
+    "allow_reentry": true,
+    "_max_reentries": 5
+  }
+}
