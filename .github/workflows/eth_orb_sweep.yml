@@ -71,11 +71,13 @@ jobs:
           mkdir -p /tmp
           gh release download eth-backtest-data-20260714 \
             -p eth5m_compact.tar.gz \
+            -p ref_eth_1m.tar.gz \
             -R ${{ github.repository }} \
-            -D /tmp \
-            --clobber
+            -D /tmp
           tar -xzf /tmp/eth5m_compact.tar.gz -C /tmp
+          tar -xzf /tmp/ref_eth_1m.tar.gz -C /tmp
           echo "ETH compact markets: $(ls /tmp/eth5m_compact | wc -l)"
+          echo "ETH reference 1m: $(ls /tmp/ref_eth_1m | wc -l)"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -93,6 +95,7 @@ jobs:
           BT_IS_DIR: is_maker_eth
           BT_EXTRA_STRATEGIES: coin_full_registry_eth.json
           BT_ONLY_EXTRA_REGISTRY: "1"
+          BT_REF_BTC_1M_DIR: /tmp/ref_eth_1m
         run: |
           python3 run_is.py \
             --files is_files_eth_compact.txt \
@@ -107,6 +110,7 @@ jobs:
           BT_OOS_DIR: oos_maker_eth
           BT_EXTRA_STRATEGIES: coin_full_registry_eth.json
           BT_ONLY_EXTRA_REGISTRY: "1"
+          BT_REF_BTC_1M_DIR: /tmp/ref_eth_1m
         run: |
           python3 run_oos.py \
             --files oos_files_eth_compact.txt \
