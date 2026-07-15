@@ -1,0 +1,489 @@
+# CHANGE_SUMMARY
+# 2026-07-15  kilo
+#   - Integrated orb_fade filters into the BTC ORB feed compare workflow.
+#   - Copied filters_v2 engine + feature modules (engine.py, features_indicators.py,
+#     features_flow_pa.py, features_pm_book.py) into backtest/filters_v2/.
+#   - Created backtest/apply_orb_fade_filters.py to apply the per-leg filter
+#     configs to the raw daily_orb_v5 trades before the quant suite runs.
+#   - Packaged raw BTC 5m Polymarket book data (BTC_RAW_DIR) into the workflow
+#     artifact so features_pm_book.py can run in GHA.
+#   - Added a filter-application step after each IS backtest (Binance + Hyperliquid)
+#     and updated report notes to state that filters are applied.
+# WHY: The workflow was comparing unfiltered daily_orb_v5 cores; this change makes
+#      the comparison use the actual orb_fade filtered legs.
+
+name: BTC ORB feed compare
+
+on:
+  workflow_dispatch:
+
+env:
+  BTC_COMPACT_DIR: /tmp/btc5m_compact
+  BTC_RAW_DIR: /tmp/btc5m_all
+  REF_BN_DIR: /tmp/ref_btc_1m
+  REF_HL_DIR: /tmp/ref_hl_1m
+  BACKTEST_DIR: backtest
+
+jobs:
+  prep-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install numpy pandas requests redis zstandard
+
+      - name: Install rclone
+        run: |
+          curl https://rclone.org/install.sh | sudo bash
+          rclone version
+
+      - name: Configure rclone
+        run: |
+          mkdir -p ~/.config/rclone
+          echo "${{ secrets.RCLONE_CONF_B64 }}" | base64 -d > ~/.config/rclone/rclone.conf
+          chmod 600 ~/.config/rclone/rclone.conf
+
+      - name: Verify gdrive access
+        run: |
+          rclone lsf gdrive:polybacktest_60d/polymarket/btc/5m/ | head
+          rclone lsf gdrive:trading_backtest/reference/binance/btc/spot/klines_1m/ | head
+          rclone lsf gdrive:trading_backtest/reference/hyperliquid/btc/spot/klines_1m/ | head
+
+      - name: Download BTC 5m raw market data
+        run: |
+          mkdir -p ${{ env.BTC_RAW_DIR }}
+          rclone copy gdrive:polybacktest_60d/polymarket/btc/5m/ ${{ env.BTC_RAW_DIR }}/ \
+            --transfers 16 --checkers 32 --fast-list
+          echo "raw files: $(ls ${{ env.BTC_RAW_DIR }} | wc -l)"
+
+      - name: Compactify BTC 5m data
+        working-directory: ${{ env.BACKTEST_DIR }}
+        run: |
+          python3 compactify.py
+          echo "compact files: $(ls ${{ env.BTC_COMPACT_DIR }} | wc -l)"
+
+      - name: Build IS index
+        working-directory: ${{ env.BACKTEST_DIR }}
+        run: |
+          python3 build_index_coin_compact.py btc ${{ env.BTC_COMPACT_DIR }} is_index_compact.json.gz --workers 3
+          ls -lh is_index_compact.json.gz
+
+      - name: Download Binance reference klines
+        run: |
+          mkdir -p ${{ env.REF_BN_DIR }}
+          rclone copy gdrive:trading_backtest/reference/binance/btc/spot/klines_1m/ ${{ env.REF_BN_DIR }}/ \
+            --transfers 16 --fast-list
+          echo "binance ref zips: $(ls ${{ env.REF_BN_DIR }} | wc -l)"
+
+      - name: Download Hyperliquid reference klines
+        run: |
+          mkdir -p ${{ env.REF_HL_DIR }}
+          rclone copy gdrive:trading_backtest/reference/hyperliquid/btc/spot/klines_1m/ ${{ env.REF_HL_DIR }}/ \
+            --transfers 16 --fast-list
+          echo "hyperliquid ref zips: $(ls ${{ env.REF_HL_DIR }} | wc -l)"
+
+      - name: Package backtest data
+        run: |
+          tar -czf ${{ github.workspace }}/btc_backtest_data.tar.gz \
+            ${{ env.BTC_COMPACT_DIR }} \
+            ${{ env.BTC_RAW_DIR }} \
+            ${{ env.REF_BN_DIR }} \
+            ${{ env.REF_HL_DIR }} \
+            ${{ github.workspace }}/${{ env.BACKTEST_DIR }}/is_index_compact.json.gz
+          ls -lh ${{ github.workspace }}/btc_backtest_data.tar.gz
+
+      - name: Upload backtest data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-backtest-data
+          path: ${{ github.workspace }}/btc_backtest_data.tar.gz
+          retention-days: 2
+          if-no-files-found: error
+
+  compare:
+    needs: prep-data
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      PM_BOOK_DIR: /tmp/btc5m_all
+    strategy:
+      fail-fast: false
+      matrix:
+        leg:
+          - b1m_liqpull40
+          - b1m_imbslope30
+          - b1m_chand40
+          - l5m_mom30
+          - l5m_liqpull60
+          - l3m_bbpct40
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install numpy pandas requests redis zstandard
+
+      - name: Download backtest data
+        uses: actions/download-artifact@v4
+        with:
+          name: btc-backtest-data
+          path: /tmp
+
+      - name: Extract backtest data
+        run: |
+          cd /
+          tar -xzf /tmp/btc_backtest_data.tar.gz
+          ls -d ${{ env.BTC_COMPACT_DIR }} ${{ env.BTC_RAW_DIR }} ${{ env.REF_BN_DIR }} ${{ env.REF_HL_DIR }}
+
+      - name: Generate BTC leg registry
+        working-directory: ${{ env.BACKTEST_DIR }}
+        run: |
+          python3 - << 'PYEOF'
+          import json
+          import os
+
+          LEG = "${{ matrix.leg }}"
+
+          # Base daily_orb_v5 parameters for each orb_fade leg.
+          # The filter features from orb_fade_full_stack.json are stored in the
+          # registry for traceability, but are not yet wired into the backtest
+          # engine (filters_v2 is not present in this repo).
+          BASES = {
+              "b1m_liqpull40": {
+                  "tf_hint": "1m", "max_reentries": 5, "_max_reentries": 5,
+                  "filter": {"feat": "PM_liq_pull20", "op": "<", "thr": 40},
+              },
+              "b1m_imbslope30": {
+                  "tf_hint": "1m", "max_reentries": 5, "_max_reentries": 5,
+                  "filter": {"feat": "PM_imb_slope20", "op": "<", "thr": 30},
+              },
+              "b1m_chand40": {
+                  "tf_hint": "1m", "max_reentries": 5, "_max_reentries": 5,
+                  "filter": {"feat": "IND_chand22_1d", "op": ">", "thr": 40},
+              },
+              "l5m_mom30": {
+                  "tf_hint": "5m", "max_reentries": 5, "_max_reentries": 5,
+                  "filter": {"feat": "IND_mom30_1d", "op": "<", "thr": 80},
+              },
+              "l5m_liqpull60": {
+                  "tf_hint": "5m", "max_reentries": 5, "_max_reentries": 5,
+                  "filter": {"feat": "PM_liq_pull20", "op": "<", "thr": 60},
+              },
+              "l3m_bbpct40": {
+                  "tf_hint": "3m", "max_reentries": 5, "_max_reentries": 5,
+                  "filter": {"feat": "IND_bbpct20_1d", "op": ">", "thr": 40},
+              },
+          }
+
+          base = BASES[LEG]
+          name = f"btc_{LEG}"
+          registry = {
+              name: {
+                  "module": "phase_2.daily_orb_v5",
+                  "fn": "daily_orb_v5_signal",
+                  "params": ["spot_price", "asset", "rem_sec", "yp", "np_val",
+                             "yes_ask", "no_ask", "tf_hint", "market_id", "max_reentries"],
+                  "tf_hint": base["tf_hint"],
+                  "max_reentries": base["max_reentries"],
+                  "allow_reentry": True,
+                  "_max_reentries": base["_max_reentries"],
+                  "asset": "BTC",
+                  "_orb_fade_leg": LEG,
+                  "_filter": base["filter"],
+              }
+          }
+
+          with open("coin_full_registry_btc.json", "w") as fh:
+              json.dump(registry, fh, indent=2)
+          print(f"wrote coin_full_registry_btc.json: {name}")
+          PYEOF
+
+      - name: Generate compact file list
+        run: |
+          ls ${{ env.BTC_COMPACT_DIR }}/*.pkl.gz > /tmp/is_files_btc_compact.txt
+          wc -l /tmp/is_files_btc_compact.txt
+
+      - name: IS backtest (Binance ref)
+        working-directory: ${{ env.BACKTEST_DIR }}
+        env:
+          BT_IS_DIR: is_bn
+          BT_EXTRA_STRATEGIES: ${{ github.workspace }}/${{ env.BACKTEST_DIR }}/coin_full_registry_btc.json
+          BT_ONLY_EXTRA_REGISTRY: "1"
+          BT_REF_BTC_1M_DIR: ${{ env.REF_BN_DIR }}
+          BT_REF_FEED: binance
+        run: |
+          python3 run_is.py \
+            --files /tmp/is_files_btc_compact.txt \
+            --workers 2 \
+            --compact \
+            --fill taker \
+            --only btc_${{ matrix.leg }}
+
+      - name: Apply orb_fade filter (Binance)
+        working-directory: ${{ env.BACKTEST_DIR }}
+        env:
+          BT_IS_DIR: is_bn
+          BT_REF_BTC_1M_DIR: ${{ env.REF_BN_DIR }}
+          PM_BOOK_DIR: ${{ env.PM_BOOK_DIR }}
+        run: |
+          python3 apply_orb_fade_filters.py --leg ${{ matrix.leg }}
+
+      - name: IS backtest (Hyperliquid ref)
+        working-directory: ${{ env.BACKTEST_DIR }}
+        env:
+          BT_IS_DIR: is_hl
+          BT_EXTRA_STRATEGIES: ${{ github.workspace }}/${{ env.BACKTEST_DIR }}/coin_full_registry_btc.json
+          BT_ONLY_EXTRA_REGISTRY: "1"
+          BT_REF_HL_1M_DIR: ${{ env.REF_HL_DIR }}
+          BT_REF_FEED: hyperliquid
+        run: |
+          python3 run_is.py \
+            --files /tmp/is_files_btc_compact.txt \
+            --workers 2 \
+            --compact \
+            --fill taker \
+            --only btc_${{ matrix.leg }}
+
+      - name: Apply orb_fade filter (Hyperliquid)
+        working-directory: ${{ env.BACKTEST_DIR }}
+        env:
+          BT_IS_DIR: is_hl
+          BT_REF_HL_1M_DIR: ${{ env.REF_HL_DIR }}
+          PM_BOOK_DIR: ${{ env.PM_BOOK_DIR }}
+        run: |
+          python3 apply_orb_fade_filters.py --leg ${{ matrix.leg }}
+
+      - name: Quant suite (Binance)
+        working-directory: ${{ env.BACKTEST_DIR }}
+        env:
+          BT_IS_DIR: is_bn
+          BT_Q_DIR: quant_bn
+        run: |
+          python3 quant_suite.py --only btc_${{ matrix.leg }} --workers 2 --fill taker
+
+      - name: Quant suite (Hyperliquid)
+        working-directory: ${{ env.BACKTEST_DIR }}
+        env:
+          BT_IS_DIR: is_hl
+          BT_Q_DIR: quant_hl
+        run: |
+          python3 quant_suite.py --only btc_${{ matrix.leg }} --workers 2 --fill taker
+
+      - name: Per-leg comparison report
+        working-directory: ${{ env.BACKTEST_DIR }}
+        run: |
+          python3 - << 'PYEOF'
+          import json
+          import os
+
+          LEG = "${{ matrix.leg }}"
+          NAME = f"btc_{LEG}"
+
+          def load_quant(qdir):
+              path = os.path.join("results", qdir, f"{NAME}.quant.json")
+              if not os.path.exists(path):
+                  return None
+              with open(path) as fh:
+                  return json.load(fh)
+
+          bn = load_quant("quant_bn")
+          hl = load_quant("quant_hl")
+
+          def metrics(r):
+              if not r:
+                  return {}
+              c = r.get("core", {})
+              rk = r.get("risk", {})
+              dd = r.get("drawdown", {})
+              mc = r.get("monte_carlo_50k", {})
+              bs = r.get("bootstrap_50k", {})
+              return {
+                  "trades": r.get("n_trades", 0),
+                  "win_rate_pct": round(c.get("win_rate", 0) * 100, 2),
+                  "total_pnl": c.get("total_pnl", 0),
+                  "return_pct": c.get("return_pct", 0),
+                  "profit_factor": c.get("profit_factor"),
+                  "sharpe_per_trade": rk.get("sharpe_per_trade", 0),
+                  "sortino_per_trade": rk.get("sortino_per_trade", 0),
+                  "psr": rk.get("psr", 0),
+                  "dsr": rk.get("dsr"),
+                  "max_dd_pct": dd.get("max_dd_pct", 0),
+                  "ulcer_index": dd.get("ulcer_index", 0),
+                  "p_ruin": mc.get("p_ruin", 0),
+                  "boot_ci_low": bs.get("pnl_ci_2.5", 0),
+                  "boot_ci_high": bs.get("pnl_ci_97.5", 0),
+              }
+
+          m_bn = metrics(bn)
+          m_hl = metrics(hl)
+
+          numeric_keys = [k for k, v in m_bn.items() if isinstance(v, (int, float))]
+          report = {
+              "leg": LEG,
+              "strategy": NAME,
+              "binance": m_bn,
+              "hyperliquid": m_hl,
+              "delta": {k: round(m_hl.get(k, 0) - m_bn.get(k, 0), 6) for k in numeric_keys},
+          }
+
+          out_dir = "reports/btc_orb_feed_compare"
+          os.makedirs(out_dir, exist_ok=True)
+          with open(f"{out_dir}/{LEG}.json", "w") as fh:
+              json.dump(report, fh, indent=2)
+
+          def fmt(v):
+              if v is None:
+                  return "-"
+              if isinstance(v, float):
+                  return f"{v:.4f}"
+              return str(v)
+
+          def delta(k):
+              bv = m_bn.get(k)
+              hv = m_hl.get(k)
+              if bv is None or hv is None:
+                  return "-"
+              return fmt(round(hv - bv, 6))
+
+          lines = [
+              f"# BTC ORB feed compare: {LEG}",
+              "",
+              f"Strategy: `{NAME}`",
+              "",
+              "| metric | Binance | Hyperliquid | delta (HL - BN) |",
+              "|---|---|---|---|",
+              f"| trades | {m_bn.get('trades', 0)} | {m_hl.get('trades', 0)} | {delta('trades')} |",
+              f"| win rate % | {fmt(m_bn.get('win_rate_pct'))} | {fmt(m_hl.get('win_rate_pct'))} | {delta('win_rate_pct')} |",
+              f"| total PnL $ | {fmt(m_bn.get('total_pnl'))} | {fmt(m_hl.get('total_pnl'))} | {delta('total_pnl')} |",
+              f"| return % | {fmt(m_bn.get('return_pct'))} | {fmt(m_hl.get('return_pct'))} | {delta('return_pct')} |",
+              f"| profit factor | {fmt(m_bn.get('profit_factor'))} | {fmt(m_hl.get('profit_factor'))} | - |",
+              f"| Sharpe/trade | {fmt(m_bn.get('sharpe_per_trade'))} | {fmt(m_hl.get('sharpe_per_trade'))} | {delta('sharpe_per_trade')} |",
+              f"| Sortino/trade | {fmt(m_bn.get('sortino_per_trade'))} | {fmt(m_hl.get('sortino_per_trade'))} | {delta('sortino_per_trade')} |",
+              f"| PSR | {fmt(m_bn.get('psr'))} | {fmt(m_hl.get('psr'))} | {delta('psr')} |",
+              f"| DSR | {fmt(m_bn.get('dsr'))} | {fmt(m_hl.get('dsr'))} | - |",
+              f"| max DD % | {fmt(m_bn.get('max_dd_pct'))} | {fmt(m_hl.get('max_dd_pct'))} | {delta('max_dd_pct')} |",
+              f"| ulcer index | {fmt(m_bn.get('ulcer_index'))} | {fmt(m_hl.get('ulcer_index'))} | {delta('ulcer_index')} |",
+              f"| P(ruin) | {fmt(m_bn.get('p_ruin'))} | {fmt(m_hl.get('p_ruin'))} | {delta('p_ruin')} |",
+              f"| boot CI 95 low $ | {fmt(m_bn.get('boot_ci_low'))} | {fmt(m_hl.get('boot_ci_low'))} | {delta('boot_ci_low')} |",
+              f"| boot CI 95 high $ | {fmt(m_bn.get('boot_ci_high'))} | {fmt(m_hl.get('boot_ci_high'))} | {delta('boot_ci_high')} |",
+              "",
+              "_Note: orb_fade filters are applied post-backtest via apply_orb_fade_filters.py; "
+              "this run compares the filtered orb_fade legs (breakout vs fade) on the two reference feeds._",
+          ]
+
+          with open(f"{out_dir}/{LEG}.md", "w") as fh:
+              fh.write("\n".join(lines) + "\n")
+
+          print(f"report for {LEG}: BN pnl={m_bn.get('total_pnl')} HL pnl={m_hl.get('total_pnl')}")
+          PYEOF
+
+      - name: Upload per-leg artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: btc-orb-feed-compare-${{ matrix.leg }}
+          path: |
+            backtest/results/is_bn/
+            backtest/results/is_hl/
+            backtest/results/quant_bn/
+            backtest/results/quant_hl/
+            backtest/reports/btc_orb_feed_compare/
+          if-no-files-found: ignore
+
+  aggregate:
+    needs: compare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Download per-leg reports
+        uses: actions/download-artifact@v4
+        with:
+          path: per-leg-artifacts
+          pattern: btc-orb-feed-compare-*
+          merge-multiple: true
+
+      - name: Combine reports
+        run: |
+          python3 - << 'PYEOF'
+          import json
+          import glob
+          import os
+
+          files = sorted(glob.glob("per-leg-artifacts/backtest/reports/btc_orb_feed_compare/*.json"))
+          combined = {"legs": []}
+
+          md_lines = [
+              "# BTC ORB feed compare: Binance vs Hyperliquid",
+              "",
+              "Per-leg comparison of orb_fade filtered legs on Binance vs Hyperliquid reference feeds.",
+              "",
+              "| leg | trades BN | trades HL | PnL BN $ | PnL HL $ | ret BN % | ret HL % | Sharpe BN | Sharpe HL | maxDD BN % | maxDD HL % |",
+              "|---|---|---|---|---|---|---|---|---|---|---|",
+          ]
+
+          def fmt(v):
+              return f"{v:.2f}" if isinstance(v, (int, float)) else str(v)
+
+          for path in files:
+              with open(path) as fh:
+                  r = json.load(fh)
+              combined["legs"].append(r)
+              leg = r["leg"]
+              bn = r["binance"]
+              hl = r["hyperliquid"]
+              md_lines.append(
+                  f"| {leg} | {bn.get('trades', 0)} | {hl.get('trades', 0)} | "
+                  f"{fmt(bn.get('total_pnl'))} | {fmt(hl.get('total_pnl'))} | "
+                  f"{fmt(bn.get('return_pct'))} | {fmt(hl.get('return_pct'))} | "
+                  f"{fmt(bn.get('sharpe_per_trade'))} | {fmt(hl.get('sharpe_per_trade'))} | "
+                  f"{fmt(bn.get('max_dd_pct'))} | {fmt(hl.get('max_dd_pct'))} |"
+              )
+
+          md_lines.extend([
+              "",
+              "## Assumptions / limitations",
+              "",
+              "- The orb_fade filter features (PM_liq_pull20, PM_imb_slope20, "
+              "IND_chand22_1d, IND_mom30_1d, IND_bbpct20_1d) are applied post-backtest "
+              "by apply_orb_fade_filters.py using trailing-7d percentile ranks on the "
+              "reference feed and the leg's own trade sequence; trades that meet the "
+              "filter condition are faded (direction mirrored), and the rest are kept "
+              "as breakouts.",
+              "- Hyperliquid reference coverage is currently much smaller than Binance "
+              "(only a few days uploaded as of this writing), so the HL metrics are "
+              "computed over a smaller sample and many OR windows will be missing.",
+              "- Taker fill model is used for realistic fills.",
+              "- One matrix job per leg; each job runs the same strategy twice with the "
+              "two reference feeds and then runs the quant suite on both result sets.",
+              "",
+          ])
+
+          out_dir = "reports/btc_orb_feed_compare"
+          os.makedirs(out_dir, exist_ok=True)
+          with open(f"{out_dir}/combined.json", "w") as fh:
+              json.dump(combined, fh, indent=2)
+          with open(f"{out_dir}/combined.md", "w") as fh:
+              fh.write("\n".join(md_lines) + "\n")
+
+          print(f"combined report written: {len(combined['legs'])} legs")
+          PYEOF
+
+      - name: Upload combined report
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-orb-feed-compare-combined
+          path: reports/btc_orb_feed_compare/
+          if-no-files-found: error

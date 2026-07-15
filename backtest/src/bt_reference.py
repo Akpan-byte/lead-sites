@@ -4,19 +4,26 @@
 #   - opening_range(): 09:30 ET-anchored OR high/low over or_seconds, from 1m bars.
 #   - closes_upto()/bars_upto(): strictly causal (bar open_time < t) series for
 #     indicator strategies that otherwise "bootstrap bars" over REST in live.
-# WHY: daily_orb_v5 and the REST-indicator strats need a reference price series;
-#      live uses Hyperliquid trade archives / REST bootstrap; in backtest we swap
-#      that for the recorded Binance 1m klines with NO look-ahead.
-"""Causal Binance 1m reference feed (backtest-only helper).
+# 2026-07-15  kimi
+#   - Added BT_REF_FEED selector ("binance" or "hyperliquid", default "binance").
+#   - Hyperliquid path loads from BT_REF_HL_1M_DIR (default /tmp/ref_hl_1m) using
+#     BTCUSDT-1m-YYYY-MM-DD.zip files in the same CSV layout as Binance.
+# WHY: A parallel Hyperliquid 1m reference dataset is being built; the backtest
+#      engine must be able to switch the causal reference substrate without
+#      changing any caller code.
+"""Causal 1m reference feed selector (backtest-only helper).
 
 NOT live code. Provides the reference price substrate that the sandbox driver
 uses in place of the live Hyperliquid trade archive (for the daily_orb_v5 opening
 range) and the REST "bootstrap bars" calls (for indicator strategies).
 
-Data source: gdrive:trading_backtest/reference/binance/btc/spot/klines_1m/
-BTCUSDT-1m-YYYY-MM-DD.zip  -> one CSV, 1440 1m rows/day, no header:
-  open_time_us, open, high, low, close, volume, close_time_us, quote_volume,
-  trades, taker_buy_base, taker_buy_quote, ignore
+The feed source is selected at load time by the BT_REF_FEED environment variable:
+  "binance" (default) -> BT_REF_BTC_1M_DIR -> /tmp/ref_btc_1m
+  "hyperliquid"       -> BT_REF_HL_1M_DIR  -> /tmp/ref_hl_1m
+Both feeds use the same daily zip format:
+  BTCUSDT-1m-YYYY-MM-DD.zip -> one CSV, 1440 1m rows/day, no header:
+    open_time_us, open, high, low, close, volume, close_time_us, quote_volume,
+    trades, taker_buy_base, taker_buy_quote, ignore
 """
 from __future__ import annotations
 
@@ -34,6 +41,17 @@ UTC = ZoneInfo("UTC")
 _ROWS: list[tuple[int, float, float, float, float]] = []
 _LOADED = False
 _SRC_DIR: str | None = None
+_FEED: str = "binance"
+
+_DEFAULT_FEEDS = {
+    "binance": "/tmp/ref_btc_1m",
+    "hyperliquid": "/tmp/ref_hl_1m",
+}
+_FEED_DIR_ENVS = {
+    "binance": "BT_REF_BTC_1M_DIR",
+    "hyperliquid": "BT_REF_HL_1M_DIR",
+}
+_VALID_FEEDS = set(_DEFAULT_FEEDS)
 
 
 def _read_zip(path: str) -> list[tuple[int, float, float, float, float]]:
@@ -57,11 +75,26 @@ def _read_zip(path: str) -> list[tuple[int, float, float, float, float]]:
     return out
 
 
-def load(src_dir: str | None = None) -> int:
-    """Load (or reload) all daily zips under src_dir. Returns row count."""
-    global _ROWS, _LOADED, _SRC_DIR
+def load(src_dir: str | None = None, feed: str | None = None) -> int:
+    """Load (or reload) all daily zips. Returns row count.
+
+    If src_dir is given it is used directly. Otherwise feed (or the BT_REF_FEED
+    environment variable) selects the default directory and environment variable
+    override: "binance" (default) uses BT_REF_BTC_1M_DIR -> /tmp/ref_btc_1m,
+    "hyperliquid" uses BT_REF_HL_1M_DIR -> /tmp/ref_hl_1m.
+    """
+    global _ROWS, _LOADED, _SRC_DIR, _FEED
     if src_dir is None:
-        src_dir = os.environ.get("BT_REF_BTC_1M_DIR", "/tmp/ref_btc_1m")
+        if feed is None:
+            feed = os.environ.get("BT_REF_FEED", "binance").lower().strip()
+        if feed not in _VALID_FEEDS:
+            raise ValueError(
+                f"BT_REF_FEED must be one of {_VALID_FEEDS}, got {feed!r}"
+            )
+        src_dir = os.environ.get(_FEED_DIR_ENVS[feed], _DEFAULT_FEEDS[feed])
+        _FEED = feed
+    else:
+        _FEED = feed or "explicit"
     rows: list[tuple[int, float, float, float, float]] = []
     for path in sorted(glob.glob(os.path.join(src_dir, "*.zip"))):
         rows.extend(_read_zip(path))
@@ -158,6 +191,17 @@ def resample_upto(asset: str, t_ms: int, tf_min: int, limit: int = 400) -> list[
 def closes_upto(asset: str, t_ms: int, n: int = 2000) -> list[float]:
     """Causal close series (open_time < t_ms), oldest->newest, last n."""
     return [r[4] for r in bars_upto(asset, t_ms, n)]
+
+
+def price_at(asset: str, t_ms: int) -> float | None:
+    """Last reference close price with open_time_ms <= t_ms (causal)."""
+    _ensure()
+    import bisect
+    keys = [r[0] for r in _ROWS]
+    i = bisect.bisect_right(keys, t_ms) - 1
+    if i < 0:
+        return None
+    return _ROWS[i][4]
 
 
 def coverage() -> tuple[int, int, int] | None:
