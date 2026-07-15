@@ -10,7 +10,13 @@ __pycache__/
 *.tar.gz
 *.zip
 compute_backends/
-filters_v2/
+# CHANGE_SUMMARY 2026-07-15 kilo
+#   - Removed filters_v2/ from gitignore. The btc_orb_feed_compare GHA workflow
+#     now vendors the filters_v2 engine + feature modules in this directory so
+#     it can run on ubuntu-latest without access to /config/backtest/filters_v2/.
+# WHY: filters_v2/ was ignored because it previously lived only in /config; it
+#      is now a deliberate part of the lead-sites repo for the orb_fade workflow.
+filters_v2/cache/
 _refdata_cache/
 cache/
 val_data/
