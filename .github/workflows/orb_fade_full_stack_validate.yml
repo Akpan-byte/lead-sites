@@ -1,0 +1,76 @@
+# CHANGE_SUMMARY
+# 2026-07-15  kilo
+#   - Created orb_fade_full_stack_validate.yml: triggered automatically after
+#     the BTC ORB feed-compare workflow finishes, downloads the per-leg filtered
+#     trade artifacts, and runs a shared-wallet replay of the 6-leg full stack.
+#   - Also supports manual workflow_dispatch with a run_id input.
+# WHY: The feed-compare workflow tests each leg in isolation; this workflow
+#      confirms that combining the same filtered legs under one shared $200
+#      wallet (the live configuration) still looks healthy and produces no
+#      errors.
+name: orb_fade full-stack validate
+
+on:
+  workflow_run:
+    workflows: ["BTC ORB feed compare"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "btc_orb_feed_compare run id to pull artifacts from"
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  combine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Determine source run id
+        id: runid
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run_id=${{ github.event.inputs.run_id }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_id=${{ github.event.workflow_run.id }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Download feed-compare per-leg artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p artifacts
+          gh run download ${{ steps.runid.outputs.run_id }} \
+            --repo ${{ github.repository }} \
+            --pattern "btc-orb-feed-compare-*" \
+            --dir artifacts
+          find artifacts -type f | head -20
+
+      - name: Combine legs into shared-wallet replay
+        working-directory: backtest
+        run: |
+          python3 combine_orb_fade_full_stack.py ${{ github.workspace }}/artifacts
+          cat reports/orb_fade_full_stack/full_stack.md
+
+      - name: Upload full-stack report
+        uses: actions/upload-artifact@v4
+        with:
+          name: orb-fade-full-stack-report
+          path: |
+            backtest/reports/orb_fade_full_stack/
+            backtest/results/is_hl/full_stack.trades.jsonl.gz
+            backtest/results/is_bn/full_stack.trades.jsonl.gz
+          if-no-files-found: error

@@ -15,4 +15,5 @@
 !/.github/
 !/.github/workflows/
 !/.github/workflows/btc_orb_feed_compare.yml
+!/.github/workflows/orb_fade_full_stack_validate.yml
 
