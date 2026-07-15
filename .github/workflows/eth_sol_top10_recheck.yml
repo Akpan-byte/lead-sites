@@ -1,0 +1,139 @@
+name: ETH/SOL top-10 forward performers re-backtest
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/eth_sol_top10_recheck.yml'
+      - 'backtest/run_is.py'
+      - 'backtest/run_oos.py'
+      - 'backtest/quant_suite.py'
+      - 'backtest/driver.py'
+      - 'backtest/coin_full_registry_eth.json'
+      - 'backtest/coin_full_registry_sol.json'
+
+jobs:
+  recheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        include:
+          - name: eth_phase_2.btc_up_coint
+            asset: eth
+            vps_name: phase_2_btc_up_coint_eth
+          - name: eth_phase_2.ob_imbalance_fade
+            asset: eth
+            vps_name: phase_2_ob_imbalance_fade_eth
+          - name: eth_phase_2.btc_orb_1m_12re
+            asset: eth
+            vps_name: phase_2_btc_orb_1m_12re_eth
+          - name: eth_phase_2.btc_orb_1m_1re
+            asset: eth
+            vps_name: phase_2_btc_orb_1m_1re_eth
+          - name: eth_phase_2.btc_orb_1m_5re
+            asset: eth
+            vps_name: phase_2_btc_orb_1m_5re_eth
+          - name: eth_phase_2.btc_orb_1m_unl
+            asset: eth
+            vps_name: phase_2_btc_orb_1m_unl_eth
+          - name: eth_phase_2.btc_orb_1m_50re
+            asset: eth
+            vps_name: phase_2_btc_orb_1m_50re_eth
+          - name: eth_phase_2.btc_orb_5m_unl
+            asset: eth
+            vps_name: phase_2_btc_orb_5m_unl_eth
+          - name: sol_phase_2.btc_orb_1m_unl
+            asset: sol
+            vps_name: phase_2_btc_orb_1m_unl_sol
+          - name: sol_phase_2.btc_orb_1m_12re
+            asset: sol
+            vps_name: phase_2_btc_orb_1m_12re_sol
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download compact backtest data
+        run: |
+          mkdir -p /tmp
+          if [ "${{ matrix.asset }}" = "eth" ]; then
+            gh release download eth-backtest-data-20260714 \
+              -p eth5m_compact.tar.gz \
+              -p ref_eth_1m.tar.gz \
+              -R ${{ github.repository }} \
+              -D /tmp
+            tar -xzf /tmp/eth5m_compact.tar.gz -C /tmp
+            tar -xzf /tmp/ref_eth_1m.tar.gz -C /tmp
+          else
+            gh release download sol-backtest-data-20260715 \
+              -p sol5m_compact.tar.gz \
+              -p ref_sol_1m.tar.gz \
+              -R ${{ github.repository }} \
+              -D /tmp
+            tar -xzf /tmp/sol5m_compact.tar.gz -C /tmp
+            tar -xzf /tmp/ref_sol_1m.tar.gz -C /tmp
+          fi
+          ls -lh /tmp/${{ matrix.asset }}5m_compact | head -5
+          ls -lh /tmp/ref_${{ matrix.asset }}_1m | head -5
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install numpy pandas requests redis
+
+      - name: IS backtest (taker fill)
+        working-directory: backtest
+        env:
+          BT_IS_DIR: is_taker_${{ matrix.asset }}
+          BT_IS_INDEX: is_index_${{ matrix.asset }}_compact.json.gz
+          BT_EXTRA_STRATEGIES: coin_full_registry_${{ matrix.asset }}.json
+          BT_ONLY_EXTRA_REGISTRY: "1"
+          BT_REF_BTC_1M_DIR: /tmp/ref_${{ matrix.asset }}_1m
+        run: |
+          python3 run_is.py \
+            --files is_files_${{ matrix.asset }}_compact.txt \
+            --workers 2 \
+            --compact \
+            --fill taker \
+            --only ${{ matrix.name }}
+
+      - name: OOS backtest (taker fill)
+        working-directory: backtest
+        env:
+          BT_OOS_DIR: oos_taker_${{ matrix.asset }}
+          BT_EXTRA_STRATEGIES: coin_full_registry_${{ matrix.asset }}.json
+          BT_ONLY_EXTRA_REGISTRY: "1"
+          BT_REF_BTC_1M_DIR: /tmp/ref_${{ matrix.asset }}_1m
+        run: |
+          python3 run_oos.py \
+            --files oos_files_${{ matrix.asset }}_compact.txt \
+            --workers 2 \
+            --fill taker \
+            --only ${{ matrix.name }}
+
+      - name: Quant suite on IS trades
+        working-directory: backtest
+        env:
+          BT_IS_DIR: is_taker_${{ matrix.asset }}
+          BT_Q_DIR: quant_taker_${{ matrix.asset }}
+        run: |
+          python3 quant_suite.py --only ${{ matrix.name }}
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: top10-${{ matrix.vps_name }}
+          path: |
+            backtest/results/is_taker_${{ matrix.asset }}/${{ matrix.name }}.*
+            backtest/results/oos_taker_${{ matrix.asset }}/${{ matrix.name }}.*
+            backtest/results/quant_taker_${{ matrix.asset }}/${{ matrix.name }}.*
+          if-no-files-found: error
