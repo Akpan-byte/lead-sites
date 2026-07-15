@@ -93,6 +93,7 @@ jobs:
         working-directory: backtest
         env:
           BT_IS_DIR: is_maker_eth
+          BT_IS_INDEX: is_index_eth_compact.json.gz
           BT_EXTRA_STRATEGIES: coin_full_registry_eth.json
           BT_ONLY_EXTRA_REGISTRY: "1"
           BT_REF_BTC_1M_DIR: /tmp/ref_eth_1m
