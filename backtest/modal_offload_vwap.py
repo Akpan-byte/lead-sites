@@ -41,7 +41,7 @@ def run_batch(idx: int) -> list[str]:
 
     # one-time data extraction per container (~300MB tar -> /tmp, original paths)
     if not os.path.isdir("/tmp/btc5m_compact"):
-        subprocess.run(["tar", "xf", "/data/btc5m_compact.tar", "-C", "/tmp"], check=True)
+        subprocess.run(["tar", "xzf", "/data/btc5m_compact.tar.gz", "-C", "/tmp"], check=True)
 
     os.makedirs("/root/bt/results/is_vwap_taker", exist_ok=True)
     import run_is  # noqa: E402
