@@ -904,3 +904,11 @@ STRATEGIES = {
         "max_reentries": 999999,
     },
 }
+
+# ---------------------------------------------------------------------------
+# VWAP factory strategies (70 configs) - added 2026-07-15
+# ---------------------------------------------------------------------------
+from engine.vwap_registry import VWAP_STRATEGIES  # noqa: E402
+
+STRATEGIES.update(VWAP_STRATEGIES)
+

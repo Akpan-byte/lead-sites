@@ -118,6 +118,8 @@ class StrategyContext:
         self.pool = InMemoryPool(total_capital=CAPITAL, namespace=f"bt:{strategy_name}")
         self.pool.reconcile(CAPITAL, 0.0)
         self.spot_history: list[float] = []
+        self.yp_history: list[float] = []
+        self.np_history: list[float] = []
         self.oracle_spot: float | None = None
         # Stateful signal modules (daily_orb_v5, pm_orb_v4, ...) keep per-strategy
         # module-global state; we swap it in around every signal call so strategies
@@ -141,12 +143,23 @@ class StrategyContext:
             if len(self.spot_history) > SPOT_HISTORY_MAX_LEN:
                 self.spot_history = self.spot_history[-SPOT_HISTORY_MAX_LEN:]
 
+    def update_prices(self, yp, np_val):
+        if yp is not None and yp > 0:
+            self.yp_history.append(float(yp))
+            if len(self.yp_history) > SPOT_HISTORY_MAX_LEN:
+                self.yp_history = self.yp_history[-SPOT_HISTORY_MAX_LEN:]
+        if np_val is not None and np_val > 0:
+            self.np_history.append(float(np_val))
+            if len(self.np_history) > SPOT_HISTORY_MAX_LEN:
+                self.np_history = self.np_history[-SPOT_HISTORY_MAX_LEN:]
+
     def update_oracle(self, price):
         if price and price > 0:
             self.oracle_spot = float(price)
 
-    # -- exact copy of runner._build_signal_kwargs ---------------------------
-    def _build_signal_kwargs(self, market, state):
+    # -- exact copy of runner._build_signal_kwargs + VWAP extras -------------
+    def _build_signal_kwargs(self, market, state, elapsed_sec=None, duration_sec=None,
+                             orderbook_up=None, orderbook_down=None):
         params = list(self.entry.get("params", []))
         spot_history = self.spot_history
         spot_price = state["spot_price"]
@@ -170,6 +183,15 @@ class StrategyContext:
 
         or_window_seconds = self.entry.get("or_window_seconds")
         max_reentries = self.entry.get("_max_reentries") or self.entry.get("max_reentries")
+
+        # Book imbalance for VWAP orderflow/bookmap families
+        imb = 0.0
+        if orderbook_up and orderbook_down:
+            yes_bid_size = float(orderbook_up["bids"][0][1]) if orderbook_up.get("bids") else 0.0
+            no_ask_size = float(orderbook_down["asks"][0][1]) if orderbook_down.get("asks") else 0.0
+            total = yes_bid_size + no_ask_size
+            if total > 0:
+                imb = (yes_bid_size - no_ask_size) / total
 
         param_map = {
             "spot_price": spot_price,
@@ -196,6 +218,15 @@ class StrategyContext:
             "asset": market.get("asset") or "BTC",
             "start_date_iso": market.get("start_date_iso"),
             "resolution_source": market.get("resolution_source"),
+            # VWAP factory extras (opt-in via params)
+            "elapsed_sec": elapsed_sec,
+            "duration_sec": duration_sec,
+            "orderbook_up": orderbook_up,
+            "orderbook_down": orderbook_down,
+            "yp_history": self.yp_history,
+            "np_history": self.np_history,
+            "book_imbalance_val": imb,
+            "config": self.entry,
         }
         return {p: param_map.get(p) for p in params}
 
@@ -210,6 +241,14 @@ class StrategyContext:
         yes_ask = (yes_prices.get("ask") or 1.0) if yes_prices else 1.0
         np_val = (no_prices.get("bid") or 0.0) if no_prices else 0.0
         no_ask = (no_prices.get("ask") or 1.0) if no_prices else 1.0
+        self.update_prices(yp, np_val)
+
+        duration_sec = mkt.window_end - mkt.window_start
+        elapsed_sec = duration_sec - rem_sec
+
+        # Normalized books for VWAP factory
+        orderbook_up = self.feed.latest_book_real(token_yes)
+        orderbook_down = self.feed.latest_book_real(token_no)
 
         state = {
             "spot_price": spot_price,
@@ -237,7 +276,13 @@ class StrategyContext:
             self.recorder.on_event(self, "check_exits_error", str(exc))
 
         # 2) signal
-        kwargs = self._build_signal_kwargs(mkt.market, state)
+        kwargs = self._build_signal_kwargs(
+            mkt.market, state,
+            elapsed_sec=elapsed_sec,
+            duration_sec=duration_sec,
+            orderbook_up=orderbook_up,
+            orderbook_down=orderbook_down,
+        )
         self.swap_in()
         try:
             sig = self.signal_fn(**kwargs)

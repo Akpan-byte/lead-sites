@@ -1,0 +1,265 @@
+# CHANGE_SUMMARY
+# 2026-07-15  kilo
+#   - Created btc_vwap_sweep.yml to backtest 70 VWAP factory strategies on BTC 5m
+#     in-sample data, run the quant suite, and produce a selection-ready report.
+#   - Splits the 70 strategies into 10 batches of 7 for parallel GHA matrix jobs.
+#   - Downloads raw BTC 5m data, compactifies it, builds IS index, runs taker-fill
+#     backtests, then runs quant_suite.py on every result.
+# WHY: The VWAP factory gives us 70 configs; we need independent compute to test
+#      them all without swamping the VM, then compare metrics to pick stack legs.
+
+name: BTC VWAP sweep
+
+on:
+  workflow_dispatch:
+
+env:
+  BTC_COMPACT_DIR: /tmp/btc5m_compact
+  BTC_RAW_DIR: /tmp/btc5m_all
+  BACKTEST_DIR: backtest
+
+jobs:
+  prep-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install numpy pandas requests redis zstandard
+
+      - name: Install rclone
+        run: |
+          curl https://rclone.org/install.sh | sudo bash
+          rclone version
+
+      - name: Configure rclone
+        run: |
+          mkdir -p ~/.config/rclone
+          echo "${{ secrets.RCLONE_CONF_B64 }}" | base64 -d > ~/.config/rclone/rclone.conf
+          chmod 600 ~/.config/rclone/rclone.conf
+
+      - name: Download BTC 5m raw market data
+        run: |
+          mkdir -p ${{ env.BTC_RAW_DIR }}
+          rclone copy gdrive:polybacktest_60d/polymarket/btc/5m/ ${{ env.BTC_RAW_DIR }}/ \
+            --transfers 16 --checkers 32 --fast-list
+          echo "raw files: $(ls ${{ env.BTC_RAW_DIR }} | wc -l)"
+
+      - name: Compactify BTC 5m data
+        working-directory: ${{ env.BACKTEST_DIR }}
+        run: |
+          python3 compactify.py
+          echo "compact files: $(ls ${{ env.BTC_COMPACT_DIR }} | wc -l)"
+
+      - name: Build IS index
+        working-directory: ${{ env.BACKTEST_DIR }}
+        run: |
+          python3 build_index_coin_compact.py btc ${{ env.BTC_COMPACT_DIR }} is_index_compact.json.gz --workers 3
+          ls -lh is_index_compact.json.gz
+
+      - name: Package backtest data
+        run: |
+          tar -czf ${{ github.workspace }}/btc_backtest_data.tar.gz \
+            ${{ env.BTC_COMPACT_DIR }} \
+            ${{ github.workspace }}/${{ env.BACKTEST_DIR }}/is_index_compact.json.gz
+          ls -lh ${{ github.workspace }}/btc_backtest_data.tar.gz
+
+      - name: Upload backtest data artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-backtest-data-vwap
+          path: ${{ github.workspace }}/btc_backtest_data.tar.gz
+          retention-days: 2
+          if-no-files-found: error
+
+  backtest-batch:
+    needs: prep-data
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        batch: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install numpy pandas requests redis zstandard
+
+      - name: Download backtest data
+        uses: actions/download-artifact@v4
+        with:
+          name: btc-backtest-data-vwap
+          path: /tmp
+
+      - name: Extract backtest data
+        run: |
+          cd /
+          tar -xzf /tmp/btc_backtest_data.tar.gz
+          ls -d ${{ env.BTC_COMPACT_DIR }}
+
+      - name: Generate compact file list
+        run: |
+          ls ${{ env.BTC_COMPACT_DIR }}/*.pkl.gz > /tmp/is_files_btc_compact.txt
+          wc -l /tmp/is_files_btc_compact.txt
+
+      - name: Generate batch strategy list
+        working-directory: ${{ env.BACKTEST_DIR }}
+        run: |
+          python3 - << 'PYEOF'
+          import os, sys, importlib.util
+          HERE = os.path.dirname(os.path.abspath(__file__))
+          SRC = os.path.join(HERE, "src")
+          sys.path.insert(0, SRC)
+          sys.path.insert(0, HERE)
+          # Import strategy_registry to read VWAP names
+          from engine.strategy_registry import STRATEGIES
+          vwap_names = sorted([n for n in STRATEGIES if n.startswith("phase_2.vwap_")])
+          batch = int(os.environ["BATCH_IDX"])
+          batch_size = 7
+          start = batch * batch_size
+          end = start + batch_size
+          subset = vwap_names[start:end]
+          with open(f"/tmp/vwap_batch_{batch}.txt", "w") as fh:
+              fh.write(",".join(subset))
+          print(f"batch {batch}: {len(subset)} strategies")
+          print(",".join(subset))
+          PYEOF
+        env:
+          BATCH_IDX: ${{ matrix.batch }}
+
+      - name: IS backtest (taker fill)
+        working-directory: ${{ env.BACKTEST_DIR }}
+        env:
+          BT_IS_DIR: is_vwap_taker
+        run: |
+          ONLY=$(cat /tmp/vwap_batch_${{ matrix.batch }}.txt)
+          python3 run_is.py \
+            --files /tmp/is_files_btc_compact.txt \
+            --workers 2 \
+            --compact \
+            --fill taker \
+            --only "$ONLY"
+
+      - name: Quant suite
+        working-directory: ${{ env.BACKTEST_DIR }}
+        env:
+          BT_IS_DIR: is_vwap_taker
+          BT_Q_DIR: quant_vwap_taker
+        run: |
+          ONLY=$(cat /tmp/vwap_batch_${{ matrix.batch }}.txt)
+          python3 quant_suite.py --only "$ONLY" --workers 2 --fill taker
+
+      - name: Upload batch artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vwap-batch-${{ matrix.batch }}
+          path: |
+            backtest/results/is_vwap_taker/
+            backtest/results/quant_vwap_taker/
+          if-no-files-found: ignore
+
+  aggregate:
+    needs: backtest-batch
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install numpy pandas requests redis zstandard
+
+      - name: Download all batch artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: batch-artifacts
+          pattern: vwap-batch-*
+          merge-multiple: true
+
+      - name: Aggregate VWAP results
+        working-directory: ${{ env.BACKTEST_DIR }}
+        env:
+          BT_IS_DIR: is_vwap_taker
+          BT_Q_DIR: quant_vwap_taker
+        run: |
+          mkdir -p results/is_vwap_taker results/quant_vwap_taker
+          cp -r ../batch-artifacts/backtest/results/is_vwap_taker/* results/is_vwap_taker/ 2>/dev/null || true
+          cp -r ../batch-artifacts/backtest/results/quant_vwap_taker/* results/quant_vwap_taker/ 2>/dev/null || true
+          python3 - << 'PYEOF'
+          import json, glob, os
+          qdir = "results/quant_vwap_taker"
+          rows = []
+          for path in sorted(glob.glob(os.path.join(qdir, "*.quant.json"))):
+              name = os.path.basename(path).replace(".quant.json", "")
+              with open(path) as fh:
+                  r = json.load(fh)
+              c = r.get("core", {})
+              rk = r.get("risk", {})
+              dd = r.get("drawdown", {})
+              mc = r.get("monte_carlo_50k", {})
+              bs = r.get("bootstrap_50k", {})
+              rows.append({
+                  "strategy": name,
+                  "trades": r.get("n_trades", 0),
+                  "win_rate_pct": round(c.get("win_rate", 0) * 100, 2),
+                  "total_pnl": c.get("total_pnl", 0),
+                  "return_pct": c.get("return_pct", 0),
+                  "profit_factor": c.get("profit_factor"),
+                  "sharpe_per_trade": rk.get("sharpe_per_trade", 0),
+                  "sortino_per_trade": rk.get("sortino_per_trade", 0),
+                  "psr": rk.get("psr", 0),
+                  "dsr": rk.get("dsr"),
+                  "max_dd_pct": dd.get("max_dd_pct", 0),
+                  "ulcer_index": dd.get("ulcer_index", 0),
+                  "p_ruin": mc.get("p_ruin", 0),
+                  "boot_ci_low": bs.get("pnl_ci_2.5", 0),
+                  "boot_ci_high": bs.get("pnl_ci_97.5", 0),
+              })
+          rows.sort(key=lambda x: x["total_pnl"], reverse=True)
+          out_dir = "reports/btc_vwap_sweep"
+          os.makedirs(out_dir, exist_ok=True)
+          with open(f"{out_dir}/all_vwap_metrics.json", "w") as fh:
+              json.dump(rows, fh, indent=2)
+          # Simple markdown table
+          lines = ["# BTC VWAP sweep: all 70 strategies", "", "| rank | strategy | trades | win% | PnL $ | ret% | PF | Sharpe | maxDD% | PSR | P(ruin) |", "|---|---|---|---|---|---|---|---|---|---|---|"]
+          for i, r in enumerate(rows, 1):
+              lines.append(
+                  f"| {i} | {r['strategy']} | {r['trades']} | {r['win_rate_pct']:.1f} | "
+                  f"{r['total_pnl']:.2f} | {r['return_pct']:.2f} | "
+                  f"{r['profit_factor']:.2f if r['profit_factor'] else '-'} | "
+                  f"{r['sharpe_per_trade']:.3f} | {r['max_dd_pct']:.2f} | {r['psr']:.3f} | {r['p_ruin']:.4f} |"
+              )
+          with open(f"{out_dir}/all_vwap_metrics.md", "w") as fh:
+              fh.write("\n".join(lines) + "\n")
+          print(f"aggregated {len(rows)} VWAP strategies")
+          print("top 5 by PnL:")
+          for r in rows[:5]:
+              print(f"  {r['strategy']}: {r['total_pnl']:.2f} ({r['trades']} trades, maxDD {r['max_dd_pct']:.1f}%)")
+          PYEOF
+
+      - name: Upload aggregate report
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-vwap-sweep-aggregate
+          path: backtest/reports/btc_vwap_sweep/
+          if-no-files-found: error

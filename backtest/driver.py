@@ -145,7 +145,9 @@ def _compute_spread(yes_ask, yes_bid, no_ask, no_bid):
     return yes_mid, no_mid, spread, spread
 
 
-def _build_signal_kwargs(registry_entry, market, state):
+def _build_signal_kwargs(registry_entry, market, state, elapsed_sec=None,
+                         duration_sec=None, orderbook_up=None, orderbook_down=None,
+                         yp_history=None, np_history=None):
     params = list(registry_entry.get("params", []))
     spot_history = state["spot_history"]
     spot_price = state["spot_price"]
@@ -179,6 +181,16 @@ def _build_signal_kwargs(registry_entry, market, state):
         tf_hint = "15m" if rem_sec > 500 else "5m"
     or_window_seconds = registry_entry.get("or_window_seconds")
     max_reentries = registry_entry.get("_max_reentries") or registry_entry.get("max_reentries")
+
+    # Book imbalance for VWAP orderflow/bookmap families
+    imb = 0.0
+    if orderbook_up and orderbook_down:
+        yes_bid_size = float(orderbook_up["bids"][0][1]) if orderbook_up.get("bids") else 0.0
+        no_ask_size = float(orderbook_down["asks"][0][1]) if orderbook_down.get("asks") else 0.0
+        total = yes_bid_size + no_ask_size
+        if total > 0:
+            imb = (yes_bid_size - no_ask_size) / total
+
     param_map = {
         "spot_price": spot_price, "strike": strike, "z_score": z_score,
         "rem_sec": rem_sec, "yp": yp, "np_val": np_val, "v_t": v_t, "std_v": std_v,
@@ -189,6 +201,15 @@ def _build_signal_kwargs(registry_entry, market, state):
         "max_reentries": max_reentries, "asset": market.get("asset") or "BTC",
         "start_date_iso": market.get("start_date_iso"),
         "resolution_source": market.get("resolution_source"),
+        # VWAP factory extras (opt-in via params)
+        "elapsed_sec": elapsed_sec,
+        "duration_sec": duration_sec,
+        "orderbook_up": orderbook_up,
+        "orderbook_down": orderbook_down,
+        "yp_history": yp_history or [],
+        "np_history": np_history or [],
+        "book_imbalance_val": imb,
+        "config": registry_entry,
     }
     return {p: param_map.get(p) for p in params}
 
