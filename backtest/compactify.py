@@ -66,7 +66,7 @@ def main() -> None:
     todo = [f for f in files if os.path.basename(f).replace(".json.gz", "") not in done]
     print(f"total {len(files)}  already {len(done)}  todo {len(todo)}", flush=True)
     n_ok = n_fail = 0
-    with ProcessPoolExecutor(max_workers=4) as ex:
+    with ProcessPoolExecutor(max_workers=3) as ex:
         for i, r in enumerate(ex.map(convert, todo, chunksize=32), 1):
             if r.startswith("ok"):
                 n_ok += 1
