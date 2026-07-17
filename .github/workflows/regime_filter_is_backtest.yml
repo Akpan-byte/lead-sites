@@ -18,6 +18,11 @@ on:
         required: true
         type: string
         default: "29451013387"
+      worker_ids:
+        description: "JSON array of global worker IDs this run should execute"
+        required: true
+        type: string
+        default: '[19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]'
 
 env:
   BTC_COMPACT_DIR: /tmp/btc5m_compact
@@ -79,9 +84,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        worker_id:
-          [19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-           29, 30, 31, 32, 33, 34, 35, 36, 37, 38]
+        worker_id: ${{ fromJson(github.event.inputs.worker_ids) }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
