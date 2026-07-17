@@ -1,0 +1,15 @@
+{
+ "strategy": "tf_alma_lb50_dev002_emax80_alm0075_alm6",
+ "family": "per_snapshot",
+ "module": "phase_2_new.trend_family_sweep",
+ "n_markets": 15386,
+ "n_closed": 9248,
+ "n_active_left": 0,
+ "total_pnl": 265.2363,
+ "cash": 467.4344,
+ "committed": 0,
+ "equity": 467.4344,
+ "start_capital": 200.0,
+ "pnl_pct": 132.62,
+ "runtime_s": 1505.8
+}
