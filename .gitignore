@@ -12,9 +12,11 @@
 !/projects/**
 !/backtest/
 !/backtest/**
+/backtest/data/
 !/.github/
 !/.github/workflows/
 !/.github/workflows/btc_orb_feed_compare.yml
 !/.github/workflows/orb_fade_full_stack_validate.yml
 !/.github/workflows/btc_vwap_sweep.yml
+!/.github/workflows/trend_exit_sim.yml
 
