@@ -15,7 +15,7 @@ import os
 import sys
 import time
 import traceback
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BACKTEST = os.path.dirname(HERE)
@@ -123,6 +123,22 @@ def run_job(job: Dict[str, Any], registry: Dict[str, Any], partial_dir: str) -> 
             f"rt={summary['runtime_s']}s")
 
 
+def _partial_paths(job: Dict[str, Any], partial_dir: str) -> Tuple[str, str]:
+    partial_base = os.path.join(
+        partial_dir, f"{job['variant']}_chunk{job['chunk_idx']:02d}"
+    )
+    return partial_base + ".trades.jsonl.gz", partial_base + ".summary.json"
+
+
+def _already_done(job: Dict[str, Any], partial_dir: str) -> bool:
+    trades_path, summ_path = _partial_paths(job, partial_dir)
+    return (
+        os.path.exists(summ_path)
+        and os.path.exists(trades_path)
+        and os.path.getsize(trades_path) > 0
+    )
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--worker-id", type=int, required=True)
@@ -131,6 +147,10 @@ def main() -> None:
     ap.add_argument("--jobs", default=os.path.join(HERE, "jobs.json"))
     ap.add_argument("--partial-dir", default=os.path.join(HERE, "partials"))
     ap.add_argument("--limit", type=int, default=0, help="run first N matching jobs only")
+    ap.add_argument("--skip-existing", action="store_true", default=True,
+                    help="skip jobs whose non-empty partial files already exist")
+    ap.add_argument("--no-skip-existing", action="store_false", dest="skip_existing",
+                    help="re-run jobs even if partial files exist")
     args = ap.parse_args()
 
     with open(args.jobs, "r", encoding="utf-8") as fh:
@@ -145,6 +165,9 @@ def main() -> None:
     print(f"worker {args.worker_id}/{args.total_workers}: {len(todo)} jobs", flush=True)
     t0 = time.time()
     for i, job in enumerate(todo, 1):
+        if args.skip_existing and _already_done(job, args.partial_dir):
+            print(f"SKIP-EXISTING {job['variant']} chunk {job['chunk_idx']} [{i}/{len(todo)}]", flush=True)
+            continue
         msg = f"START {job['variant']} chunk {job['chunk_idx']} [{i}/{len(todo)}]"
         print(msg, flush=True)
         try:
