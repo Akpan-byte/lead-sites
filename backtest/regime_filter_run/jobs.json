@@ -3,875 +3,875 @@
   "job_idx": 0,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 1,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 2,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 3,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 4,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 5,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV1",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 6,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV1",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 7,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV1",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 8,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV1",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 9,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV1",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 10,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV2",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 11,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV2",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 12,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV2",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 13,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV2",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 14,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV2",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 15,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV3",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 16,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV3",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 17,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV3",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 18,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV3",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 19,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV3",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 20,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV4",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 21,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV4",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 22,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV4",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 23,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV4",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 24,
   "variant": "tf_alma_lb50_dev002_emax80_alm0075_alm6_rV4",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 25,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 26,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 27,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 28,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 29,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 30,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV1",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 31,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV1",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 32,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV1",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 33,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV1",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 34,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV1",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 35,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV2",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 36,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV2",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 37,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV2",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 38,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV2",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 39,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV2",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 40,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV3",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 41,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV3",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 42,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV3",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 43,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV3",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 44,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV3",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 45,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV4",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 46,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV4",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 47,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV4",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 48,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV4",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 49,
   "variant": "tf_dema_lb20_dev002_emax85_alp0001_rV4",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 50,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 51,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 52,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 53,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 54,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 55,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV1",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 56,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV1",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 57,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV1",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 58,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV1",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 59,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV1",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 60,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV2",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 61,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV2",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 62,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV2",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 63,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV2",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 64,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV2",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 65,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV3",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 66,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV3",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 67,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV3",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 68,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV3",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 69,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV3",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 70,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV4",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 71,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV4",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 72,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV4",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 73,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV4",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 74,
   "variant": "tf_dema_lb20_dev002_emax85_alp0002_rV4",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 75,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 76,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 77,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 78,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 79,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 80,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV1",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 81,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV1",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 82,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV1",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 83,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV1",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 84,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV1",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 85,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV2",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 86,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV2",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 87,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV2",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 88,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV2",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 89,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV2",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 90,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV3",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 91,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV3",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 92,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV3",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 93,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV3",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 94,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV3",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 95,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV4",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 96,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV4",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 97,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV4",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 98,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV4",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 99,
   "variant": "tf_holt_lb50_dev002_emax85_alp0002_hol0005_rV4",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 100,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 101,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 102,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 103,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 104,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 105,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV1",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 106,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV1",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 107,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV1",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 108,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV1",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 109,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV1",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 110,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV2",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 111,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV2",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 112,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV2",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 113,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV2",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 114,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV2",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 115,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV3",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 116,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV3",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 117,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV3",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 118,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV3",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 119,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV3",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  },
  {
   "job_idx": 120,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV4",
   "chunk_idx": 0,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_00.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_00.txt",
   "fill": "taker"
  },
  {
   "job_idx": 121,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV4",
   "chunk_idx": 1,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_01.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_01.txt",
   "fill": "taker"
  },
  {
   "job_idx": 122,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV4",
   "chunk_idx": 2,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_02.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_02.txt",
   "fill": "taker"
  },
  {
   "job_idx": 123,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV4",
   "chunk_idx": 3,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_03.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_03.txt",
   "fill": "taker"
  },
  {
   "job_idx": 124,
   "variant": "tf_vwap_ticks_lb50_dev002_emax80_rV4",
   "chunk_idx": 4,
-  "chunk_path": "/config/worktrees/kilo_regime_filter/backtest/regime_filter_run/chunks/chunk_04.txt",
+  "chunk_path": "regime_filter_run/chunks/chunk_04.txt",
   "fill": "taker"
  }
 ]

@@ -48,7 +48,9 @@ def main() -> None:
         with open(chunk_path, "w", encoding="utf-8") as fh:
             for _, _, f in chunk_rows:
                 fh.write(f + "\n")
-        chunk_files.append(chunk_path)
+        # Store path relative to backtest root so jobs are portable across VM,
+        # laptop, and GitHub Actions runners.
+        chunk_files.append(os.path.relpath(chunk_path, BACKTEST))
         print(f"chunk {i}: {chunk_rows[0][0]} -> {chunk_rows[-1][0]}  markets={len(chunk_rows)}")
 
     with open(args.registry, "r", encoding="utf-8") as fh:
