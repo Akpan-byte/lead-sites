@@ -2,9 +2,23 @@
 """
 Post-process trend-family hold-to-expiry trades to simulate early exits.
 
-Reads raw Polymarket BTC 5m up/down trades and local 1m BTCUSDT reference bars,
-estimates an intraday mark price for each binary contract, and applies stop-loss,
-time-stop, and take-profit rules.  Outputs comparison tables vs. the baseline.
+Version 2 uses REAL Polymarket BTC 5m order-book snapshot data from
+  gdrive:polybacktest_60d/polymarket/btc/5m/
+cached locally under backtest/data/polybacktest_real/snapshots/.
+
+For each market snapshot the script extracts the order-book mid price
+(best_bid + best_ask) / 2 for the traded side (YES -> orderbook_up,
+NO -> orderbook_down), falling back to price_up/price_down when the book
+is empty.  Missing exact timestamps are filled by linear interpolation
+between the two nearest snapshots for that market.
+
+Exit rules tested:
+  - Stop-loss: -1%, -2%, -3%, -5% of entry price
+  - Time-stop: 60s, 120s, 180s if not profitable
+  - Take-profit: 0.90, 0.93, 0.95, 0.97
+  - Combinations: stop-loss + take-profit
+
+Outputs comparison tables vs. the baseline hold-to-expiry result.
 
 Usage:
     python3 trend_family_exit_sim.py
@@ -12,10 +26,12 @@ Usage:
 
 # CHANGE_SUMMARY
 # 2026-07-17  kilo_exit_test
-#   - Created trend_family_exit_sim.py to test early exits on trend-family legs.
-#   - Uses a per-trade calibrated logit mark model driven by 1m spot bars.
-#   - Tests stop-loss, time-stop, take-profit, and combined rules.
-# WHY: Trend-family legs hold to expiry and are the main drawdown driver.
+#   - Rewrote trend_family_exit_sim.py to use real Polymarket snapshot data
+#     from gdrive:polybacktest_60d/polymarket/btc/5m/ instead of modeled BTC bars.
+#   - Reads orderbook_up / orderbook_down mid prices, with price_up/price_down fallback.
+#   - Linear interpolation for timestamps between snapshots.
+#   - Same exit rules and report format as v1.
+# WHY: User requested only real polybacktest data, not a spot-bar proxy model.
 
 from __future__ import annotations
 
@@ -23,10 +39,10 @@ import argparse
 import gzip
 import json
 import math
-import os
 import sys
 from collections import defaultdict
 from datetime import datetime, timezone
+from multiprocessing import Pool
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -38,7 +54,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent
 DATA_DIR = ROOT / "data" / "trend_exits"
 TRADES_DIR = DATA_DIR / "trades"
-BARS_DIR = DATA_DIR / "bars"
+SNAPSHOT_DIR = ROOT / "data" / "polybacktest_real" / "snapshots"
 REPORT_DIR = ROOT / "reports"
 REPORT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -54,22 +70,6 @@ WINDOW_SEC = 300.0  # Polymarket BTC 5m up/down window
 FEE_ROUND_DECIMALS = 5
 MIN_FEE_USDC = 0.00001
 DEFAULT_TAKER_RATE = 0.07
-
-
-def sigmoid(z: float) -> float:
-    """Numerically stable sigmoid."""
-    if z >= 0:
-        ez = math.exp(-z)
-        return 1.0 / (1.0 + ez)
-    else:
-        ez = math.exp(z)
-        return ez / (1.0 + ez)
-
-
-def logit(p: float) -> float:
-    """Logit, clipped away from 0/1."""
-    p = max(1e-6, min(1.0 - 1e-6, p))
-    return math.log(p / (1.0 - p))
 
 
 # ---------------------------------------------------------------------------
@@ -106,35 +106,111 @@ def taker_fee_shares(gross_shares: float, price: float, fee_schedule: Any = None
 
 
 # ---------------------------------------------------------------------------
-# Reference bars
+# Snapshot parsing and price extraction
 # ---------------------------------------------------------------------------
-def load_bars(bars_dir: Path) -> Dict[int, Dict[str, float]]:
-    """Load all 1m bars into a dict keyed by open_time in seconds."""
-    bars: Dict[int, Dict[str, float]] = {}
-    if not bars_dir.exists():
-        raise FileNotFoundError(f"Bars directory not found: {bars_dir}")
-    for zf in sorted(bars_dir.glob("BTCUSDT-1m-*.zip")):
-        import zipfile
+def parse_iso_ts(iso: str) -> float:
+    """Convert ISO-8601 timestamp (with optional Z) to Unix seconds."""
+    if iso.endswith("Z"):
+        iso = iso[:-1] + "+00:00"
+    return datetime.fromisoformat(iso).timestamp()
 
-        with zipfile.ZipFile(zf) as z:
-            for name in z.namelist():
-                with z.open(name) as fh:
-                    for line in fh:
-                        line = line.decode().strip()
-                        if not line:
-                            continue
-                        parts = line.split(",")
-                        # Binance kline: open_time_ms, open, high, low, close, volume, close_time_ms, ...
-                        open_ts = int(parts[0]) // 1_000_000  # us -> s
-                        bars[open_ts] = {
-                            "open": float(parts[1]),
-                            "high": float(parts[2]),
-                            "low": float(parts[3]),
-                            "close": float(parts[4]),
-                            "volume": float(parts[5]),
-                            "close_ts": int(parts[6]) // 1_000_000,
-                        }
-    return bars
+
+def best_bid_ask(orderbook: Optional[Dict[str, Any]]) -> Tuple[Optional[float], Optional[float]]:
+    """Return (best_bid, best_ask) from an orderbook dict, or (None, None)."""
+    if not orderbook:
+        return None, None
+    bids = orderbook.get("bids") or []
+    asks = orderbook.get("asks") or []
+    best_bid = bids[0]["price"] if bids else None
+    best_ask = asks[0]["price"] if asks else None
+    return best_bid, best_ask
+
+
+def side_mid_price(snap: Dict[str, Any], direction: str) -> Optional[float]:
+    """
+    Return the mid price for the traded side from a snapshot.
+    YES  -> orderbook_up mid, fallback to price_up.
+    NO   -> orderbook_down mid, fallback to price_down.
+    """
+    if direction == "YES":
+        bid, ask = best_bid_ask(snap.get("orderbook_up"))
+        if bid is not None and ask is not None:
+            return (bid + ask) / 2.0
+        return snap.get("price_up")
+    else:
+        bid, ask = best_bid_ask(snap.get("orderbook_down"))
+        if bid is not None and ask is not None:
+            return (bid + ask) / 2.0
+        return snap.get("price_down")
+
+
+def load_snapshot_series(market_id: str, snapshot_dir: Path) -> Optional[Dict[str, Any]]:
+    """
+    Load the snapshot time series for a market.
+    Returns dict with 'ts' (np.array), 'yes' (np.array), 'no' (np.array) or None.
+    """
+    path = snapshot_dir / f"{market_id}.json.gz"
+    if not path.exists():
+        return None
+    with gzip.open(path, "rt") as fh:
+        snaps = json.load(fh)
+    if not snaps:
+        return None
+
+    ts_list: List[float] = []
+    yes_list: List[Optional[float]] = []
+    no_list: List[Optional[float]] = []
+    for snap in snaps:
+        ts_list.append(parse_iso_ts(snap["time"]))
+        yes_list.append(side_mid_price(snap, "YES"))
+        no_list.append(side_mid_price(snap, "NO"))
+
+    return {
+        "ts": np.array(ts_list, dtype=float),
+        "yes": np.array(yes_list, dtype=float),
+        "no": np.array(no_list, dtype=float),
+    }
+
+
+def interpolate_price(ts: np.ndarray, prices: np.ndarray, t: float) -> Optional[float]:
+    """
+    Linearly interpolate price at time t.
+    - If t is before first snapshot, use first price.
+    - If t is after last snapshot, use last price.
+    - If nearest surrounding snapshots are NaN, fallback to nearest valid price.
+    """
+    if len(ts) == 0:
+        return None
+    if t <= ts[0]:
+        return float(prices[0]) if not math.isnan(prices[0]) else None
+    if t >= ts[-1]:
+        return float(prices[-1]) if not math.isnan(prices[-1]) else None
+
+    idx = np.searchsorted(ts, t)
+    # ts[idx-1] < t <= ts[idx]
+    t0, p0 = ts[idx - 1], prices[idx - 1]
+    t1, p1 = ts[idx], prices[idx]
+
+    if not math.isnan(p0) and not math.isnan(p1):
+        if t1 == t0:
+            return float(p0)
+        return float(p0 + (p1 - p0) * (t - t0) / (t1 - t0))
+
+    # If one side is NaN, use the other side if valid.
+    if not math.isnan(p0):
+        return float(p0)
+    if not math.isnan(p1):
+        return float(p1)
+
+    # Both surrounding prices are NaN: scan outward for nearest valid price.
+    for offset in range(1, max(idx, len(ts) - idx) + 1):
+        lo = idx - 1 - offset
+        hi = idx + offset
+        if lo >= 0 and not math.isnan(prices[lo]):
+            return float(prices[lo])
+        if hi < len(ts) and not math.isnan(prices[hi]):
+            return float(prices[hi])
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -159,7 +235,6 @@ def trade_times(trade: Dict[str, Any]) -> Tuple[float, float, float]:
     if start_iso:
         start_ts = datetime.fromisoformat(start_iso).timestamp()
     else:
-        # Fallback: closed_at - opened_at approximates the end of window
         start_ts = trade["closed_at"] - WINDOW_SEC
     entry_ts = start_ts + float(trade["opened_at"])
     expiry_ts = start_ts + WINDOW_SEC
@@ -167,173 +242,119 @@ def trade_times(trade: Dict[str, Any]) -> Tuple[float, float, float]:
 
 
 # ---------------------------------------------------------------------------
-# Mark model
-# ---------------------------------------------------------------------------
-def calibrate_sigma(trade: Dict[str, Any], entry_ts: float, expiry_ts: float) -> Optional[float]:
-    """Return calibrated sigma for the logit mark model, or None if degenerate."""
-    market = trade.get("market", {})
-    reference = market.get("open_oracle_price") or trade.get("entry_spot")
-    if reference is None or reference <= 0:
-        return None
-
-    entry_spot = float(trade.get("entry_spot", reference))
-    entry_price = float(trade["entry_price"])
-    direction = trade["direction"]
-    tau_entry = max(1e-9, (expiry_ts - entry_ts) / WINDOW_SEC)
-
-    x_entry = (entry_spot - reference) / reference
-    if abs(x_entry) < 1e-12:
-        return None
-
-    lp = logit(entry_price)
-    if abs(lp) < 1e-12:
-        return None
-
-    if direction == "YES":
-        sigma = x_entry / (math.sqrt(tau_entry) * lp)
-    else:  # NO
-        sigma = -x_entry / (math.sqrt(tau_entry) * lp)
-
-    if sigma <= 0 or not math.isfinite(sigma):
-        return None
-    return sigma
-
-
-def mark_price(spot: float, reference: float, tau: float, sigma: float, direction: str) -> float:
-    """Estimated binary contract price at a point in time."""
-    if reference <= 0 or tau <= 0 or sigma <= 0:
-        return 0.5
-    x = (spot - reference) / reference
-    z = x / (sigma * math.sqrt(max(tau, 1e-9)))
-    if direction == "YES":
-        return sigmoid(z)
-    else:
-        return sigmoid(-z)
-
-
-# ---------------------------------------------------------------------------
 # Exit simulation
 # ---------------------------------------------------------------------------
-def bars_for_trade(trade: Dict[str, Any], entry_ts: float, expiry_ts: float, bars: Dict[int, Dict[str, float]]) -> List[Tuple[float, Dict[str, float]]]:
-    """Return sorted list of (bar_open_ts, bar) covering the trade window."""
-    start_minute = int(entry_ts // 60) * 60
-    # Include the bar that contains entry and the bar that contains expiry.
-    out: List[Tuple[float, Dict[str, float]]] = []
-    for ts in range(start_minute, int(expiry_ts) + 60, 60):
-        b = bars.get(ts)
-        if b is not None:
-            out.append((float(ts), b))
-    return out
-
-
-def simulate_trade(trade: Dict[str, Any], bars: Dict[int, Dict[str, float]],
-                   stop_pct: Optional[float] = None,
-                   time_stop_sec: Optional[float] = None,
-                   target: Optional[float] = None,
-                   default_sigma: Optional[float] = None) -> Dict[str, Any]:
-    """
-    Simulate a single trade with optional early-exit rules.
-    Returns a dict with the simulated exit price, reason, and pnl.
-    """
-    entry_ts, expiry_ts, _ = trade_times(trade)
-    market = trade.get("market", {})
-    reference = market.get("open_oracle_price") or trade.get("entry_spot")
-    if reference is None or reference <= 0:
-        reference = trade.get("entry_spot", 0.0)
-
+def close_trade(trade: Dict[str, Any], exit_price: float, exit_reason: str) -> Dict[str, Any]:
+    """Return a copy of the trade with simulated PnL for the given exit."""
     entry_price = float(trade["entry_price"])
-    direction = trade["direction"]
-    fee_schedule = market.get("fee_schedule")
-
-    sigma = calibrate_sigma(trade, entry_ts, expiry_ts)
-    if sigma is None:
-        sigma = default_sigma if default_sigma is not None else 0.001
-
+    fee_schedule = trade.get("market", {}).get("fee_schedule")
     gross_shares = float(trade.get("shares", 0.0))
     fee_shares = float(trade.get("fee_shares", 0.0))
     net_shares = max(0.0, gross_shares - fee_shares)
     entry_fee = float(trade.get("entry_fee", 0.0))
-
-    stop_level = entry_price * (1.0 - stop_pct) if stop_pct is not None else None
-
-    trade_bars = bars_for_trade(trade, entry_ts, expiry_ts, bars)
-    exit_price = None
-    exit_reason = "expiry_resolve"
-
-    for bar_ts, bar in trade_bars:
-        bar_end = bar_ts + 60.0
-        if bar_end <= entry_ts:
-            continue  # bar fully before entry
-        if bar_ts >= expiry_ts:
-            break
-
-        # Fraction of the 5m window remaining at the middle of this bar.
-        mid_ts = bar_ts + 30.0
-        tau = max(0.0, (expiry_ts - mid_ts) / WINDOW_SEC)
-
-        # Use high/low to check intrabar stop/target touches.
-        if direction == "YES":
-            mark_high = mark_price(bar["high"], reference, tau, sigma, direction)
-            mark_low = mark_price(bar["low"], reference, tau, sigma, direction)
-            mark_close = mark_price(bar["close"], reference, tau, sigma, direction)
-        else:
-            # For NO, high spot hurts (lower mark), low spot helps (higher mark).
-            mark_high = mark_price(bar["high"], reference, tau, sigma, direction)
-            mark_low = mark_price(bar["low"], reference, tau, sigma, direction)
-            mark_close = mark_price(bar["close"], reference, tau, sigma, direction)
-
-        elapsed = mid_ts - entry_ts
-
-        # Check take-profit first (conservative: if touched, exit at target).
-        if target is not None:
-            if direction == "YES" and mark_high >= target:
-                exit_price = target
-                exit_reason = f"take_profit_{target:.2f}"
-                break
-            if direction == "NO" and mark_low <= (1.0 - target):
-                exit_price = 1.0 - target
-                exit_reason = f"take_profit_{target:.2f}"
-                break
-
-        # Check stop-loss (conservative: if touched, exit at stop level).
-        if stop_level is not None:
-            if direction == "YES" and mark_low <= stop_level:
-                exit_price = stop_level
-                exit_reason = f"stop_loss_{stop_pct:.3f}"
-                break
-            if direction == "NO" and mark_high >= stop_level:
-                exit_price = stop_level
-                exit_reason = f"stop_loss_{stop_pct:.3f}"
-                break
-
-        # Time-stop: exit if not profitable after N seconds.
-        if time_stop_sec is not None and elapsed >= time_stop_sec:
-            if mark_close < entry_price:
-                exit_price = mark_close
-                exit_reason = f"time_stop_{int(time_stop_sec)}s"
-                break
-
-    if exit_price is None:
-        exit_price = float(trade.get("exit_price", 0.0))
-        exit_reason = trade.get("exit_reason", "expiry_resolve")
-
     exit_fee = calculate_taker_fee(net_shares, exit_price, fee_schedule)
     pnl = net_shares * (exit_price - entry_price) - entry_fee - exit_fee
-
     return {
         **trade,
         "sim_exit_price": exit_price,
         "sim_exit_reason": exit_reason,
         "sim_pnl": pnl,
-        "sim_sigma": sigma,
     }
+
+
+def simulate_trade_all_rules(
+    trade: Dict[str, Any],
+    series: Dict[str, Any],
+    rules: List[Tuple[str, Dict[str, Optional[float]]]],
+) -> Dict[str, Dict[str, Any]]:
+    """
+    Simulate a single trade once, applying all exit rules in a single forward scan.
+    Returns {rule_name: sim_trade_result}.  The baseline rule is named "baseline".
+    """
+    entry_ts, expiry_ts, _ = trade_times(trade)
+    direction = trade["direction"]
+    entry_price = float(trade["entry_price"])
+
+    ts = series["ts"]
+    prices = series["yes"] if direction == "YES" else series["no"]
+
+    # Results holder: each rule starts unset.
+    results: Dict[str, Optional[Tuple[float, str]]] = {name: None for name, _ in rules}
+
+    # Helper to resolve a snapshot price.
+    def price_at(i: int) -> Optional[float]:
+        p = prices[i]
+        if not math.isnan(p):
+            return float(p)
+        return interpolate_price(ts, prices, ts[i])
+
+    # Build rule-specific levels once.
+    rule_specs: List[Tuple[str, Optional[float], Optional[float], Optional[float], Optional[float]]] = []
+    for name, kwargs in rules:
+        stop_pct = kwargs.get("stop_pct")
+        time_stop_sec = kwargs.get("time_stop_sec")
+        target = kwargs.get("target")
+        stop_level = entry_price * (1.0 - stop_pct) if stop_pct is not None else None
+        rule_specs.append((name, stop_level, time_stop_sec, target, stop_pct))
+
+    start_idx = int(np.searchsorted(ts, entry_ts))
+    for i in range(start_idx, len(ts)):
+        t_i = ts[i]
+        if t_i > expiry_ts:
+            break
+
+        p_i = price_at(i)
+        if p_i is None:
+            continue
+        elapsed = t_i - entry_ts
+
+        for name, stop_level, time_stop_sec, target, stop_pct in rule_specs:
+            if results[name] is not None:
+                continue
+
+            # Take-profit.
+            if target is not None:
+                if direction == "YES" and p_i >= target:
+                    results[name] = (target, f"take_profit_{target:.2f}")
+                    continue
+                if direction == "NO" and p_i <= (1.0 - target):
+                    results[name] = (1.0 - target, f"take_profit_{target:.2f}")
+                    continue
+
+            # Stop-loss.
+            if stop_level is not None:
+                if direction == "YES" and p_i <= stop_level:
+                    results[name] = (stop_level, f"stop_loss_{stop_pct:.3f}")
+                    continue
+                if direction == "NO" and p_i >= stop_level:
+                    results[name] = (stop_level, f"stop_loss_{stop_pct:.3f}")
+                    continue
+
+            # Time-stop.
+            if time_stop_sec is not None and elapsed >= time_stop_sec:
+                if p_i < entry_price:
+                    results[name] = (p_i, f"time_stop_{int(time_stop_sec)}s")
+                    continue
+
+        # Early exit from the snapshot scan once every active rule has triggered.
+        if all(v is not None for v in results.values()):
+            break
+
+    # Any rule that never triggered uses the original expiry resolution.
+    expiry_exit = float(trade.get("exit_price", 0.0))
+    expiry_reason = trade.get("exit_reason", "expiry_resolve")
+
+    out: Dict[str, Dict[str, Any]] = {}
+    for name, _ in rules:
+        exit_price, exit_reason = results[name] if results[name] is not None else (expiry_exit, expiry_reason)
+        out[name] = close_trade(trade, exit_price, exit_reason)
+    return out
 
 
 # ---------------------------------------------------------------------------
 # Metrics
 # ---------------------------------------------------------------------------
 def equity_curve(trades: List[Dict[str, Any]]) -> List[float]:
-    """Cumulative PnL assuming sequential trades."""
     cap = 0.0
     curve = []
     for t in trades:
@@ -361,6 +382,12 @@ def win_rate(trades: List[Dict[str, Any]]) -> float:
     return wins / len(trades)
 
 
+def profit_factor(pnls: List[float]) -> float:
+    gains = sum(p for p in pnls if p > 0)
+    losses = abs(sum(p for p in pnls if p < 0))
+    return round(gains / losses, 4) if losses > 0 else float("inf")
+
+
 def metrics(trades: List[Dict[str, Any]], key: str = "sim_pnl") -> Dict[str, Any]:
     curve = equity_curve(trades)
     pnls = [t.get(key, t.get("pnl", 0.0)) for t in trades]
@@ -372,12 +399,6 @@ def metrics(trades: List[Dict[str, Any]], key: str = "sim_pnl") -> Dict[str, Any
         "max_dd": round(max_drawdown(curve), 4),
         "profit_factor": profit_factor(pnls),
     }
-
-
-def profit_factor(pnls: List[float]) -> float:
-    gains = sum(p for p in pnls if p > 0)
-    losses = abs(sum(p for p in pnls if p < 0))
-    return round(gains / losses, 4) if losses > 0 else float("inf")
 
 
 # ---------------------------------------------------------------------------
@@ -393,7 +414,6 @@ def build_rules() -> List[Tuple[str, Dict[str, Optional[float]]]]:
         rules.append((f"time_stop_{sec}s", {"time_stop_sec": float(sec)}))
     for tgt in [0.90, 0.93, 0.95, 0.97]:
         rules.append((f"tp_{int(tgt*100)}", {"target": tgt}))
-    # Combinations: stop-loss + take-profit
     for pct in [0.02, 0.03, 0.05]:
         for tgt in [0.93, 0.95, 0.97]:
             rules.append((f"stop_{int(pct*100)}pct_tp_{int(tgt*100)}", {"stop_pct": pct, "target": tgt}))
@@ -401,28 +421,108 @@ def build_rules() -> List[Tuple[str, Dict[str, Optional[float]]]]:
 
 
 # ---------------------------------------------------------------------------
+# Multiprocessing worker
+# ---------------------------------------------------------------------------
+def _process_market_chunk(
+    chunk: List[Tuple[str, List[Tuple[str, Dict[str, Any]]]]],
+    snapshot_dir: Path,
+    rules: List[Tuple[str, Dict[str, Optional[float]]]],
+    worker_id: int,
+) -> Tuple[Dict[str, Dict[str, List[Dict[str, Any]]]], Dict[str, int]]:
+    """
+    Process a chunk of (market_id, labelled_trades) in a subprocess.
+    Returns partial accumulators and snapshot coverage counts per leg.
+    """
+    accum: Dict[str, Dict[str, List[Dict[str, Any]]]] = defaultdict(lambda: defaultdict(list))
+    coverage: Dict[str, int] = defaultdict(int)
+    total = len(chunk)
+    for idx, (market_id, labelled_trades) in enumerate(chunk, 1):
+        if idx % 200 == 0:
+            print(f"    worker {worker_id}: {idx}/{total} markets...", file=sys.stderr)
+        series = load_snapshot_series(market_id, snapshot_dir)
+        if series is None:
+            for leg, t in labelled_trades:
+                for name, _ in rules:
+                    accum[leg][name].append(t)
+            continue
+        for leg, t in labelled_trades:
+            coverage[leg] += 1
+            sim_results = simulate_trade_all_rules(t, series, rules)
+            for name, sim_trade in sim_results.items():
+                accum[leg][name].append(sim_trade)
+    return dict(accum), dict(coverage)
+
+
+# ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
-def run_leg(leg: str, bars: Dict[int, Dict[str, float]], rules: List[Tuple[str, Dict[str, Optional[float]]]], default_sigma: float) -> Dict[str, Any]:
-    trades_path = TRADES_DIR / f"{leg}.trades.jsonl.gz"
-    if not trades_path.exists():
-        print(f"  WARN: missing {trades_path}", file=sys.stderr)
-        return {}
+def process_all_legs(
+    legs: List[str],
+    snapshot_dir: Path,
+    rules: List[Tuple[str, Dict[str, Optional[float]]]],
+    workers: int = 1,
+) -> Tuple[Dict[str, Dict[str, Dict[str, Any]]], Dict[str, Tuple[int, int]]]:
+    """
+    Process all legs together.  When workers > 1, split markets across a pool.
+    Returns (results_by_leg, coverage_by_leg).
+    """
+    # Load all trades, keeping leg label.
+    all_trades_by_leg: Dict[str, List[Dict[str, Any]]] = {}
+    trades_by_market: Dict[str, List[Tuple[str, Dict[str, Any]]]] = defaultdict(list)
+    coverage: Dict[str, Tuple[int, int]] = {}
 
-    raw_trades = load_trades(trades_path)
-    # Attach baseline pnl as sim_pnl for consistent metric code.
-    for t in raw_trades:
-        t["sim_pnl"] = float(t.get("pnl", 0.0))
+    for leg in legs:
+        trades_path = TRADES_DIR / f"{leg}.trades.jsonl.gz"
+        if not trades_path.exists():
+            print(f"  WARN: missing {trades_path}", file=sys.stderr)
+            coverage[leg] = (0, 0)
+            continue
+        raw_trades = load_trades(trades_path)
+        for t in raw_trades:
+            t["sim_pnl"] = float(t.get("pnl", 0.0))
+            trades_by_market[t["condition_id"]].append((leg, t))
+        all_trades_by_leg[leg] = raw_trades
+        coverage[leg] = (len(raw_trades), 0)
 
-    results: Dict[str, Dict[str, Any]] = {}
-    baseline_metrics = metrics(raw_trades)
-    results["baseline"] = baseline_metrics
+    # Accumulators per leg per rule.
+    accum: Dict[str, Dict[str, List[Dict[str, Any]]]] = {
+        leg: {name: [] for name, _ in rules}
+        for leg in all_trades_by_leg
+    }
 
-    for name, kwargs in rules[1:]:
-        simmed = [simulate_trade(t, bars, default_sigma=default_sigma, **kwargs) for t in raw_trades]
-        results[name] = metrics(simmed, key="sim_pnl")
+    market_items = list(trades_by_market.items())
 
-    return results
+    if workers <= 1:
+        partial_accum, partial_cov = _process_market_chunk(market_items, snapshot_dir, rules, 0)
+        for leg, rule_accum in partial_accum.items():
+            for name, trades in rule_accum.items():
+                accum[leg][name].extend(trades)
+        for leg, count in partial_cov.items():
+            coverage[leg] = (coverage[leg][0], coverage[leg][1] + count)
+    else:
+        # Split markets into workers chunks.
+        chunks: List[List[Tuple[str, List[Tuple[str, Dict[str, Any]]]]]] = [[] for _ in range(workers)]
+        for idx, item in enumerate(market_items):
+            chunks[idx % workers].append(item)
+
+        with Pool(workers) as pool:
+            args = [(chunk, snapshot_dir, rules, i) for i, chunk in enumerate(chunks) if chunk]
+            results = pool.starmap(_process_market_chunk, args)
+
+        for partial_accum, partial_cov in results:
+            for leg, rule_accum in partial_accum.items():
+                for name, trades in rule_accum.items():
+                    accum[leg][name].extend(trades)
+            for leg, count in partial_cov.items():
+                coverage[leg] = (coverage[leg][0], coverage[leg][1] + count)
+
+    results_by_leg: Dict[str, Dict[str, Dict[str, Any]]] = {}
+    for leg in all_trades_by_leg:
+        results_by_leg[leg] = {}
+        for name, _ in rules:
+            results_by_leg[leg][name] = metrics(accum[leg][name])
+
+    return results_by_leg, coverage
 
 
 def print_table(leg: str, results: Dict[str, Dict[str, Any]]) -> str:
@@ -433,7 +533,8 @@ def print_table(leg: str, results: Dict[str, Dict[str, Any]]) -> str:
     baseline_pnl = results.get("baseline", {}).get("total_pnl", 0.0)
     baseline_dd = results.get("baseline", {}).get("max_dd", 0.0)
 
-    for name in ["baseline"] + [n for n, _ in build_rules()[1:]]:
+    rule_names = ["baseline"] + [n for n, _ in build_rules()[1:]]
+    for name in rule_names:
         if name not in results:
             continue
         m = results[name]
@@ -475,26 +576,33 @@ def best_rule(results: Dict[str, Dict[str, Any]]) -> Tuple[str, Dict[str, Any]]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Simulate early exits on trend-family legs.")
+    parser = argparse.ArgumentParser(description="Simulate early exits on trend-family legs using real Polybacktest snapshots.")
     parser.add_argument("--legs", nargs="+", default=TOP_LEGS, help="Leg names to analyse.")
-    parser.add_argument("--default-sigma", type=float, default=0.001, help="Fallback sigma for degenerate calibrations.")
+    parser.add_argument("--snapshot-dir", type=Path, default=SNAPSHOT_DIR, help="Directory of market snapshot .json.gz files.")
+    parser.add_argument("--output-json", type=Path, default=None, help="Write raw results to JSON for later combination.")
+    parser.add_argument("--workers", type=int, default=1, help="Number of parallel processes for market processing.")
     args = parser.parse_args()
 
-    print("Loading reference bars...")
-    bars = load_bars(BARS_DIR)
-    print(f"  Loaded {len(bars)} 1m bars.")
+    if not args.snapshot_dir.exists():
+        print(f"Snapshot directory not found: {args.snapshot_dir}", file=sys.stderr)
+        print("Pull snapshots from gdrive:polybacktest_60d/polymarket/btc/5m/ first.", file=sys.stderr)
+        return 1
 
+    print(f"Using snapshots from: {args.snapshot_dir}")
+    print(f"Mark price = order-book mid (best_bid + best_ask) / 2; fallback to price_up/price_down.")
     print("Loading trades and simulating exits...")
+
     rules = build_rules()
-    all_results: Dict[str, Dict[str, Dict[str, Any]]] = {}
+    all_results, coverage = process_all_legs(args.legs, args.snapshot_dir, rules, workers=args.workers)
+
     summary_lines = []
+    coverage_rows = [(leg, coverage[leg][0], coverage[leg][1]) for leg in all_results]
 
     for leg in args.legs:
-        print(f"  {leg}")
-        results = run_leg(leg, bars, rules, args.default_sigma)
-        if not results:
+        if leg not in all_results:
             continue
-        all_results[leg] = results
+        print(f"  {leg}")
+        results = all_results[leg]
         table = print_table(leg, results)
         print(table)
         summary_lines.append(table)
@@ -505,9 +613,19 @@ def main() -> int:
     # Write markdown report.
     report_path = REPORT_DIR / "trend_family_exit_report.md"
     with open(report_path, "w") as fh:
-        fh.write("# Trend-Family Early-Exit Simulation Report\n\n")
-        fh.write("Method: post-process hold-to-expiry trades with a per-trade calibrated logit mark model\n")
-        fh.write("driven by 1m BTCUSDT reference bars.\n\n")
+        fh.write("# Trend-Family Early-Exit Simulation Report (Real Polybacktest Snapshots)\n\n")
+        fh.write("Method: post-process hold-to-expiry trades using real Polymarket BTC 5m order-book\n")
+        fh.write("snapshots from `gdrive:polybacktest_60d/polymarket/btc/5m/`.\n\n")
+        fh.write("Mark price: order-book mid `(best_bid + best_ask) / 2` for the traded side;\n")
+        fh.write("fallback to `price_up` (YES) or `price_down` (NO) when the book is empty.\n")
+        fh.write("Missing exact timestamps are linearly interpolated between nearest snapshots.\n\n")
+        fh.write("Snapshot coverage:\n\n")
+        fh.write("| leg | total_trades | trades_with_snapshots | coverage |\n")
+        fh.write("|-----|--------------|-----------------------|----------|\n")
+        for leg, n_total, n_with_snap in coverage_rows:
+            pct = n_with_snap / n_total * 100 if n_total else 0.0
+            fh.write(f"| {leg} | {n_total} | {n_with_snap} | {pct:.1f}% |\n")
+        fh.write("\n")
         fh.write("Rules tested:\n")
         fh.write("- Stop-loss: -1%, -2%, -3%, -5% of entry price\n")
         fh.write("- Time-stop: 60s, 120s, 180s if not profitable\n")
@@ -523,6 +641,16 @@ def main() -> int:
                 f"| {leg} | {best} | {m['total_pnl']:.2f} | {m['max_dd']:.2f} | "
                 f"{m['win_rate']*100:.2f}% | {m['profit_factor']:.4f} |\n"
             )
+
+    if args.output_json:
+        args.output_json.parent.mkdir(parents=True, exist_ok=True)
+        with open(args.output_json, "w") as fh:
+            json.dump({
+                "legs": list(all_results.keys()),
+                "results": all_results,
+                "coverage": {leg: list(cov) for leg, cov in coverage.items()},
+            }, fh, indent=2)
+        print(f"Raw results written to {args.output_json}")
 
     print(f"\nReport written to {report_path}")
     return 0
