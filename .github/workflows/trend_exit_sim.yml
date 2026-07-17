@@ -41,7 +41,7 @@ jobs:
           mv rclone-*-linux-amd64/rclone /usr/local/bin/rclone
           chmod +x /usr/local/bin/rclone
           mkdir -p ~/.config/rclone
-          printf '%s' "${{ secrets.RCLONE_CONFIG }}" > ~/.config/rclone/rclone.conf
+          printf '%s' "${{ secrets.RCLONE_CONFIG_B64 }}" | base64 -d > ~/.config/rclone/rclone.conf
 
       - name: Pull needed snapshots from gdrive
         run: |
