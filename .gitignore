@@ -12,6 +12,7 @@
 !/projects/**
 !/backtest/
 !/backtest/**
+/backtest/data/
 !/.github/
 !/.github/workflows/
 !/.github/workflows/btc_orb_feed_compare.yml
