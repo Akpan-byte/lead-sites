@@ -15,24 +15,30 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+BACKTEST = os.path.dirname(HERE)
 
 
 def run_one(worker_id: int, total_workers: int, args) -> str:
-    log = os.path.join(args.log_dir, f"worker_{worker_id:02d}.log")
-    os.makedirs(args.log_dir, exist_ok=True)
+    log_dir = os.path.abspath(args.log_dir)
+    log = os.path.join(log_dir, f"worker_{worker_id:02d}.log")
+    os.makedirs(log_dir, exist_ok=True)
+    # Use absolute paths so the worker can run from any cwd.
+    registry_abs = os.path.abspath(args.registry)
+    jobs_abs = os.path.abspath(args.jobs)
+    partial_abs = os.path.abspath(args.partial_dir)
     cmd = [
         sys.executable,
         os.path.join(HERE, "run_worker.py"),
         "--worker-id", str(worker_id),
         "--total-workers", str(total_workers),
-        "--registry", args.registry,
-        "--jobs", args.jobs,
-        "--partial-dir", args.partial_dir,
+        "--registry", registry_abs,
+        "--jobs", jobs_abs,
+        "--partial-dir", partial_abs,
     ]
     with open(log, "w", encoding="utf-8") as fh:
         fh.write(f"# {' '.join(cmd)}\n")
         fh.flush()
-        proc = subprocess.Popen(cmd, stdout=fh, stderr=subprocess.STDOUT, cwd=HERE)
+        proc = subprocess.Popen(cmd, stdout=fh, stderr=subprocess.STDOUT, cwd=BACKTEST)
         ret = proc.wait()
     status = "OK" if ret == 0 else f"EXIT:{ret}"
     return f"worker {worker_id}: {status} (log {log})"
