@@ -46,16 +46,15 @@ jobs:
       - name: Pull needed snapshots from gdrive
         run: |
           mkdir -p backtest/data/polybacktest_real/snapshots
-          cd backtest/data/trend_exits/trades
           python3 - <<'PY'
           import gzip, json, os
           leg = "${{ matrix.leg }}"
           needed = set()
-          with gzip.open(f"{leg}.trades.jsonl.gz", "rt") as f:
+          with gzip.open(f"backtest/data/trend_exits/trades/{leg}.trades.jsonl.gz", "rt") as f:
               for line in f:
                   needed.add(json.loads(line)["condition_id"])
-          os.makedirs("../../polybacktest_real", exist_ok=True)
-          with open("../../polybacktest_real/files_from.txt", "w") as f:
+          os.makedirs("backtest/data/polybacktest_real", exist_ok=True)
+          with open("backtest/data/polybacktest_real/files_from.txt", "w") as f:
               for mid in sorted(needed):
                   f.write(f"{mid}.json.gz\n")
           print(f"{leg}: {len(needed)} snapshots needed")
