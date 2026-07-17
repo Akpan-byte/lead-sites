@@ -82,28 +82,35 @@ def _save_state(state: Dict[str, Any]) -> None:
         json.dump(state, fh, indent=1)
 
 
-def _laptop_done_count() -> int:
-    """Return number of valid summaries on the laptop partials dir."""
+def _laptop_status() -> dict:
+    """Return {'done': int, 'missing': int} for the laptop partials dir."""
     cmd = [
         "tailscale", "ssh", LAPTOP_HOST,
-        f"cd {LAPTOP_DIR} && python3 count_done.py",
+        f"cd {LAPTOP_DIR} && python3 laptop_status.py",
     ]
     try:
         out = subprocess.check_output(cmd, stderr=subprocess.DEVNULL, timeout=30).decode().strip()
-        return int(out.splitlines()[-1])
+        return json.loads(out.splitlines()[-1])
     except Exception as e:
-        _log(f"laptop done count query failed: {e}")
-        return -1
+        _log(f"laptop status query failed: {e}")
+        return {"done": -1, "missing": 9999}
 
 
 def _collect_laptop() -> None:
-    _log("collecting laptop partials via tailscale ssh + tar")
+    _log("collecting laptop partials")
     os.makedirs(PARTIAL_DIR, exist_ok=True)
-    cmd = (
-        f"tailscale ssh {LAPTOP_HOST} 'cd {LAPTOP_PARTIAL_DIR} && tar -czf - .' "
-        f"| tar -xzf - -C {PARTIAL_DIR}"
+    # Build a stable archive on the laptop first, then stream it once.
+    archive = "/tmp/laptop_regime_partials.tar.gz"
+    subprocess.run(
+        ["tailscale", "ssh", LAPTOP_HOST,
+         f"cd {LAPTOP_DIR} && tar -czf {archive} partials/"],
+        check=True,
     )
-    subprocess.run(cmd, shell=True, check=True)
+    subprocess.run(
+        f"tailscale ssh {LAPTOP_HOST} 'cat {archive}' | tar -xzf - -C {PARTIAL_DIR}",
+        shell=True,
+        check=True,
+    )
     _log("laptop partials collected")
 
 
@@ -173,9 +180,9 @@ def main() -> None:
              f"laptop_collected={laptop_collected} gha_collected={gha_collected}")
 
         if not laptop_collected:
-            lap_count = _laptop_done_count()
-            _log(f"laptop done count = {lap_count}")
-            if lap_count >= 0 and lap_count >= len(expected):
+            lap = _laptop_status()
+            _log(f"laptop status = {lap}")
+            if lap.get("missing", -1) == 0:
                 try:
                     _collect_laptop()
                     laptop_collected = True
