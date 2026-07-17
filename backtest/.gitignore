@@ -2,6 +2,10 @@
 results/
 logs/
 data/
+!data/trend_exits/
+!data/trend_exits/trades/
+!data/trend_exits/trades/*.jsonl.gz
+!data/trend_exits/trades/*.summary.json
 venv/
 __pycache__/
 *.pyc

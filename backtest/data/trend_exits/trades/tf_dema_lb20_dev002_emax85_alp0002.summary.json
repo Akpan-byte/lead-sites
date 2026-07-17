@@ -1,0 +1,15 @@
+{
+ "strategy": "tf_dema_lb20_dev002_emax85_alp0002",
+ "family": "per_snapshot",
+ "module": "phase_2_new.trend_family_sweep",
+ "n_markets": 15386,
+ "n_closed": 4424,
+ "n_active_left": 0,
+ "total_pnl": 277.027,
+ "cash": 477.8845,
+ "committed": 0,
+ "equity": 477.8845,
+ "start_capital": 200.0,
+ "pnl_pct": 138.51,
+ "runtime_s": 2409.4
+}
