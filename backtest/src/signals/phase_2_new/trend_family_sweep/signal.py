@@ -4,7 +4,12 @@
 #   - Implements 50+ diverse trend estimators (MAs, regressions, filters, channels).
 #   - Signal triggers YES/NO when spot deviates from the estimator by a threshold.
 #   - All parameters are passed via kwargs so a sweep registry can vary them.
-# WHY: Find the best uncorrelated trend-deviation variants for the BTC 5m up/down stack.
+# 2026-07-17  kilo_regime_filter
+#   - Slice spot_history to lookback before converting to numpy so the per-tick
+#     copy cost is O(lookback) instead of O(SPOT_HISTORY_MAX_LEN=1000).
+# WHY: Find the best uncorrelated trend-deviation variants for the BTC 5m up/down stack;
+#      the full-buffer copy became a material cost when the regime wrapper called
+#      this signal on every tick across 18k markets.
 
 from typing import Any, Dict, Callable, List
 import numpy as np
@@ -535,8 +540,9 @@ def trend_family_signal(**kwargs: Any) -> Dict[str, Any]:
         neutral["reason"] = "insufficient data"
         return neutral
 
-    arr = np.array(spot_history, dtype=float)
-    arr = _np_window(arr, lookback)
+    # Only copy the lookback window we actually need (spot_history can be
+    # up to 1000 ticks; slicing first avoids converting the full buffer).
+    arr = np.array(spot_history[-lookback:], dtype=float)
     if len(arr) < 2:
         neutral["reason"] = "lookback too short"
         return neutral
