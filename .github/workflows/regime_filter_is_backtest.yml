@@ -1,0 +1,125 @@
+# CHANGE_SUMMARY
+# 2026-07-17  kilo_regime_filter
+#   - GitHub Actions orchestration for the full-IS regime-filter backtest.
+#   - Uses 20 concurrent matrix workers (global IDs 19-38) to run chunks of the
+#     deterministic job queue produced by regime_filter_run/generate_jobs.py.
+#   - Reuses an existing btc-backtest-data artifact instead of rebuilding cached
+#     compact data (default run_id 29451013387).
+# WHY: The VM and laptop handle worker IDs 0-18; GitHub Actions provides the
+#      remaining 20 workers for maximum parallelization across all targets.
+
+name: Regime Filter IS Backtest
+
+on:
+  workflow_dispatch:
+    inputs:
+      data_run_id:
+        description: "btc_orb_feed_compare run id whose btc-backtest-data artifact to reuse"
+        required: true
+        type: string
+        default: "29451013387"
+
+env:
+  BTC_COMPACT_DIR: /tmp/btc5m_compact
+  BACKTEST_DIR: backtest
+
+jobs:
+  prep-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install numpy
+
+      - name: Download existing BTC backtest data artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p /tmp/data_tar
+          gh run download ${{ github.event.inputs.data_run_id }} \
+            --repo ${{ github.repository }} \
+            --name btc-backtest-data \
+            --dir /tmp/data_tar
+          ls -lh /tmp/data_tar
+
+      - name: Extract compact data and index
+        run: |
+          cd /
+          tar -xzf /tmp/data_tar/btc_backtest_data.tar.gz
+          echo "compact files: $(ls ${{ env.BTC_COMPACT_DIR }} | wc -l)"
+          ls -lh ${{ github.workspace }}/${{ env.BACKTEST_DIR }}/is_index_compact.json.gz
+
+      - name: Package regime-filter backtest data
+        run: |
+          tar -czf ${{ github.workspace }}/regime_backtest_data.tar.gz \
+            ${{ env.BTC_COMPACT_DIR }} \
+            ${{ github.workspace }}/${{ env.BACKTEST_DIR }}/is_index_compact.json.gz
+          ls -lh ${{ github.workspace }}/regime_backtest_data.tar.gz
+
+      - name: Upload regime-filter backtest data
+        uses: actions/upload-artifact@v4
+        with:
+          name: regime-backtest-data
+          path: ${{ github.workspace }}/regime_backtest_data.tar.gz
+          retention-days: 2
+          if-no-files-found: error
+
+  backtest:
+    needs: prep-data
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        worker_id:
+          [19, 20, 21, 22, 23, 24, 25, 26, 27, 28,
+           29, 30, 31, 32, 33, 34, 35, 36, 37, 38]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install numpy
+
+      - name: Download backtest data
+        uses: actions/download-artifact@v4
+        with:
+          name: regime-backtest-data
+          path: /tmp
+
+      - name: Extract backtest data
+        run: |
+          cd /
+          tar -xzf /tmp/regime_backtest_data.tar.gz
+          echo "compact files: $(ls ${{ env.BTC_COMPACT_DIR }} | wc -l)"
+
+      - name: Run worker ${{ matrix.worker_id }}
+        working-directory: ${{ env.BACKTEST_DIR }}
+        run: |
+          python3 regime_filter_run/run_worker.py \
+            --worker-id ${{ matrix.worker_id }} \
+            --total-workers 39 \
+            --registry combined_trend_regime.json \
+            --jobs regime_filter_run/jobs.json \
+            --partial-dir regime_filter_run/partials
+
+      - name: Upload partial results
+        uses: actions/upload-artifact@v4
+        with:
+          name: regime-partial-${{ matrix.worker_id }}
+          path: backtest/regime_filter_run/partials/
+          retention-days: 2
+          if-no-files-found: error

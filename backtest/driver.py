@@ -159,6 +159,12 @@ def _build_signal_kwargs(registry_entry, market, state, elapsed_sec=None,
     yes_bid = state["yes_bid"]
     no_ask = state["no_ask"]
     no_bid = state["no_bid"]
+    # Ensure elapsed_sec / duration_sec are always available for signals.
+    if duration_sec is None:
+        tf = registry_entry.get("tf_hint") or market.get("duration") or "5m"
+        duration_sec = 300.0 if tf == "5m" else 900.0 if tf == "15m" else 1800.0 if tf == "30m" else 3600.0 if tf == "1h" else 300.0
+    if elapsed_sec is None:
+        elapsed_sec = max(0.0, duration_sec - rem_sec)
     # Lazy feature computation: a signal only reads what its declared `params`
     # ask for, so skip unused features (velocity/acceleration over the 1000-tick
     # history were ~90% of per-snapshot cost for strats that never read them).
@@ -201,7 +207,8 @@ def _build_signal_kwargs(registry_entry, market, state, elapsed_sec=None,
         "max_reentries": max_reentries, "asset": market.get("asset") or "BTC",
         "start_date_iso": market.get("start_date_iso"),
         "resolution_source": market.get("resolution_source"),
-        # VWAP factory extras (opt-in via params)
+        # Trend-family / VWAP factory extras (opt-in via params)
+        "spot_history": spot_history,
         "elapsed_sec": elapsed_sec,
         "duration_sec": duration_sec,
         "orderbook_up": orderbook_up,

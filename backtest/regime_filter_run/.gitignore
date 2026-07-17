@@ -1,0 +1,5 @@
+partials/
+logs/
+results_test/
+partials_test/
+*.log
