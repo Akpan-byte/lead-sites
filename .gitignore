@@ -17,10 +17,13 @@
 !/backtest/data/trend_exits/trades/
 !/backtest/data/trend_exits/trades/*.jsonl.gz
 !/backtest/data/trend_exits/trades/*.summary.json
+!/backtest/quant_fast.py
 !/.github/
 !/.github/workflows/
 !/.github/workflows/btc_orb_feed_compare.yml
 !/.github/workflows/orb_fade_full_stack_validate.yml
 !/.github/workflows/btc_vwap_sweep.yml
 !/.github/workflows/trend_exit_sim.yml
+!/.github/workflows/quant_parallel.yml
+!/.github/workflows/upload_trades.yml
 

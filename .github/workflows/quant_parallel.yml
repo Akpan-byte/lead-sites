@@ -1,0 +1,261 @@
+# CHANGE_SUMMARY
+# 2026-07-17  kilo
+#   - 20-worker parallel quant on GHA.
+#   - Downloads trade tarballs from a GitHub release,
+#     runs quant_fast.py on each worker's assigned variant,
+#     merges results with DSR cross-sectional pass.
+name: quant_parallel
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'GitHub release tag with trade tarballs'
+        required: true
+        default: 'quant-data-v1'
+      total_workers:
+        description: 'Number of parallel workers (max 20)'
+        required: false
+        default: 20
+        type: number
+
+jobs:
+  compute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        worker_id: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download trade data from release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${{ inputs.release_tag }}"
+          mkdir -p trades
+          
+          echo "Downloading trade tarballs from release $TAG..."
+          gh release download "$TAG" --repo "${{ github.repository }}" --pattern "*.tar.gz" --dir trades/
+          
+          echo "Extracting..."
+          for tar in trades/*.tar.gz; do
+            tar xzf "$tar" -C trades/ --strip-components=0 2>/dev/null || tar xzf "$tar" -C trades/
+          done
+          
+          echo "Trade files:"
+          ls -la trades/*.trades.jsonl.gz 2>/dev/null | awk '{print $5, $9}'
+          echo "Total: $(ls trades/*.trades.jsonl.gz 2>/dev/null | wc -l) files"
+
+      - name: Run quant on assigned variants
+        run: |
+          set -euo pipefail
+          python3 - <<'PYEOF'
+          import glob, os, subprocess, sys, json
+
+          wid = int(os.environ.get("WORKER_ID", "${{ matrix.worker_id }}"))
+          nwk = int(os.environ.get("TOTAL_WORKERS", "${{ inputs.total_workers }}"))
+
+          files = sorted(glob.glob("trades/*.trades.jsonl.gz"))
+          # Also check uncompressed
+          if not files:
+              files = sorted(glob.glob("trades/*.trades.jsonl"))
+          total = len(files)
+          
+          if total == 0:
+              print(f"ERROR: No trade files found!")
+              sys.exit(1)
+
+          assigned = [f for i, f in enumerate(files) if i % nwk == wid]
+          print(f"Worker {wid}/{nwk}: {total} files total, assigned {len(assigned)}")
+          for f in assigned:
+              sz = os.path.getsize(f)
+              print(f"  {os.path.basename(f)} ({sz/1048576:.0f}MB)")
+
+          if not assigned:
+              print(f"Worker {wid}: nothing to do, exiting.")
+              sys.exit(0)
+
+          os.makedirs("results/is_taker_regime_full", exist_ok=True)
+          os.makedirs("results/quant_fast", exist_ok=True)
+          
+          for f in assigned:
+              dest = f"results/is_taker_regime_full/{os.path.basename(f)}"
+              os.symlink(os.path.abspath(f), dest)
+
+          names = [os.path.basename(f).replace(".trades.jsonl.gz","").replace(".trades.jsonl","") for f in assigned]
+          only = ",".join(names)
+          
+          env = os.environ.copy()
+          env["BT_IS_DIR"] = "is_taker_regime_full"
+          env["BT_Q_DIR"] = "quant_fast"
+          
+          cmd = ["python3","backtest/quant_fast.py","--only",only,"--fill","taker","--workers","2"]
+          print(f"\nRunning: {' '.join(cmd)}")
+          r = subprocess.run(cmd, env=env)
+          if r.returncode != 0:
+              sys.exit(r.returncode)
+          
+          print(f"\nWorker {wid} done. Results:")
+          for n in names:
+              p = f"results/quant_fast/{n}.quant.json"
+              if os.path.exists(p):
+                  sz = os.path.getsize(p)
+                  print(f"  ✓ {n}.quant.json ({sz} bytes)")
+              else:
+                  print(f"  ✗ {n}.quant.json MISSING")
+          PYEOF
+
+      - name: Upload quant results
+        uses: actions/upload-artifact@v4
+        with:
+          name: quant-worker-${{ matrix.worker_id }}
+          path: results/quant_fast/
+          retention-days: 7
+
+  merge:
+    runs-on: ubuntu-latest
+    needs: compute
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all worker results
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p all_results
+          for i in $(seq 0 19); do
+            dir="worker-$i"
+            mkdir -p "$dir"
+            gh run download ${{ github.run_id }} \
+              --repo "${{ github.repository }}" \
+              --name "quant-worker-$i" \
+              --dir "$dir/" 2>/dev/null && \
+              cp "$dir"/*.quant.json all_results/ 2>/dev/null || true
+          done
+          echo "Collected $(ls all_results/*.quant.json 2>/dev/null | wc -l) quant files"
+
+      - name: Merge and build leaderboard
+        run: |
+          python3 - <<'PYEOF'
+          import glob, json, math, os, statistics, sys
+
+          results = {}
+          for p in sorted(glob.glob("all_results/*.quant.json")):
+              try:
+                  with open(p) as f:
+                      r = json.load(f)
+                  if "error" not in r and not r.get("empty"):
+                      results[r["strategy"]] = r
+                  else:
+                      print(f"SKIP {r.get('strategy',p)}: error={r.get('error')}, empty={r.get('empty')}")
+              except Exception as e:
+                  print(f"WARN: skipping {p}: {e}")
+
+          if not results:
+              print("ERROR: no valid quant results found")
+              sys.exit(1)
+
+          print(f"\nMerged {len(results)} strategies")
+
+          # DSR cross-sectional pass
+          N_TRIALS = 113
+          euler = 0.5772156649015329
+          srs = [r["risk"]["sharpe_per_trade"] for r in results.values()
+                 if r.get("risk") and r["risk"]["sharpe_per_trade"] is not None]
+          var_sr = statistics.variance(srs) if len(srs) > 1 else 0.0
+          emax = (math.sqrt(var_sr) * ((1 - euler) * (1 - 1.0/N_TRIALS)
+                  + euler * (1 - 1.0/(N_TRIALS * math.e))))
+
+          def norm_cdf(x): return 0.5 * (1.0 + math.erf(x / math.sqrt(2.0)))
+
+          for r in results.values():
+              if not r.get("risk"): continue
+              sr = r["risk"]["sharpe_per_trade"]
+              nn = max(2, r.get("n_trades", 2))
+              skew = r["risk"]["skew"]
+              kurt = r["risk"]["excess_kurtosis"] + 3.0
+              var_term = max(1e-12, 1 - skew*sr + ((kurt-1)/4.0)*sr*sr)
+              z = (sr - emax) * math.sqrt(nn-1) / math.sqrt(var_term)
+              r["risk"]["dsr"] = round(norm_cdf(z), 4)
+
+          # Classify baseline vs regime-filtered
+          for n, r in results.items():
+              r["is_regime"] = any(f in n for f in ["_rV1","_rV2","_rV3","_rV4"])
+
+          # Write merged
+          os.makedirs("merged", exist_ok=True)
+          for n, r in results.items():
+              with open(f"merged/{n}.quant.json", "w") as f:
+                  json.dump(r, f, indent=1)
+
+          ranked = sorted(results.values(),
+                          key=lambda r: r["core"]["total_pnl"], reverse=True)
+
+          with open("merged/leaderboard.json", "w") as f:
+              json.dump(ranked, f, indent=1)
+
+          lines = ["# Regime-Filter Quant Leaderboard (taker-fill, $200 start)\n",
+                   "| # | Strategy | Trades | Win% | PnL$ | PF | Sharpe | Sortino | MaxDD% | PSR | DSR | P(ruin) | Boot CI95 |",
+                   "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+          for i, r in enumerate(ranked, 1):
+              c=r["core"]; rk=r["risk"]; dd=r["drawdown"]
+              mc=r.get("monte_carlo_5k",{}); bs=r.get("bootstrap_5k",{})
+              pf=c["profit_factor"] if c.get("profit_factor") is not None else "inf"
+              tag = " 🏷️" if r.get("is_regime") else ""
+              lines.append(
+                  f"| {i} | {r['strategy']}{tag} | {r['n_trades']:,} | {100*c['win_rate']:.1f} | "
+                  f"{c['total_pnl']:,.0f} | {pf} | {rk['sharpe_per_trade']:.4f} | "
+                  f"{rk['sortino_per_trade']:.4f} | {dd['max_dd_pct']:.1f} | {rk['psr']:.4f} | {rk['dsr']:.4f} | "
+                  f"{mc.get('p_ruin','?')} | [{bs.get('pnl_ci_2.5',0):,.0f},{bs.get('pnl_ci_97.5',0):,.0f}] |")
+
+          with open("merged/leaderboard.md", "w") as f:
+              f.write("\n".join(lines) + "\n")
+
+          # Also write a regime comparison table
+          # Group by base estimator
+          import re
+          groups = {}
+          for n, r in results.items():
+              base = re.sub(r'_rV[1-4]$', '', n)
+              groups.setdefault(base, []).append(r)
+
+          comp_lines = ["\n\n# Baseline vs Regime-Filter Comparison\n",
+                        "| Estimator | Baseline PnL | Best Filter | Filtered PnL | Δ PnL | Baseline Sharpe | Filter Sharpe | Δ Sharpe |",
+                        "|---|---|---|---|---|---|---|---|"]
+          for base, strats in sorted(groups.items()):
+              baseline = [s for s in strats if not s.get("is_regime")]
+              filtered = [s for s in strats if s.get("is_regime")]
+              if not baseline: continue
+              bl = baseline[0]
+              bl_pnl = bl["core"]["total_pnl"]
+              bl_sh = bl["risk"]["sharpe_per_trade"]
+              if filtered:
+                  best_f = max(filtered, key=lambda s: s["core"]["total_pnl"])
+                  f_pnl = best_f["core"]["total_pnl"]
+                  f_sh = best_f["risk"]["sharpe_per_trade"]
+                  f_name = best_f["strategy"].replace(base, "").lstrip("_")
+                  delta_pnl = f_pnl - bl_pnl
+                  delta_sh = f_sh - bl_sh
+                  comp_lines.append(
+                      f"| {base[:45]} | {bl_pnl:,.0f} | {f_name} | {f_pnl:,.0f} | "
+                      f"{delta_pnl:+,.0f} | {bl_sh:.4f} | {f_sh:.4f} | {delta_sh:+.4f} |")
+
+          with open("merged/leaderboard.md", "a") as f:
+              f.write("\n".join(comp_lines) + "\n")
+
+          print(open("merged/leaderboard.md").read())
+          print(f"\nWrote merged/leaderboard.json + merged/leaderboard.md")
+          PYEOF
+
+      - name: Upload final leaderboard
+        uses: actions/upload-artifact@v4
+        with:
+          name: quant-leaderboard
+          path: merged/
+          retention-days: 30
